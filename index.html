@@ -37,12 +37,12 @@
             <div class="text-center">
                 <span class="bg-blue-50 text-blue-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Keamanan</span>
                 <h2 class="text-xl font-black text-slate-900 mt-2">SIMAK BAPPEDA</h2>
-                <p class="text-xs text-slate-400 mt-1">Silakan masuk menggunakan akun yang terdaftar</p>
+                <p class="text-xs text-slate-400 mt-1">Silakan masuk menggunakan akun dinas yang terdaftar</p>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Username</label>
-                    <input type="email" id="login-email" placeholder="email@username.com" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Email Kantor</label>
+                    <input type="email" id="login-email" placeholder="nama@naganrayakab.go.id" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
@@ -147,7 +147,17 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Unit / Penanggung Jawab</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Lokasi Penempatan Ruangan</label>
+                        <select id="lokasi-ruangan" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            <option value="Ruang Kaban">🏢 Ruang Kepala Badan</option>
+                            <option value="Ruang Sekretariat">💼 Ruang Sekretariat</option>
+                            <option value="Ruang Pusdatin">🖥️ Ruang Pusdatin / IT</option>
+                            <option value="Ruang Rapat Utama">📢 Ruang Rapat Utama</option>
+                            <option value="Aula Serbaguna">🏛️ Aula Serbaguna</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Penanggung Jawab / Pemilik</label>
                         <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                     <div>
@@ -212,17 +222,25 @@
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5 pb-3 border-b border-slate-100 non-cetak">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-5 pb-3 border-b border-slate-100 non-cetak">
                 <div>
                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-1.5 h-4 rounded bg-slate-900 block"></span> Logistik & Data Inventaris
                     </h3>
                     <p class="text-xs text-slate-400 mt-0.5">Seluruh daftar barang yang tercatat secara real-time</p>
                 </div>
-                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 active:scale-[0.97]">
-                    🖨️ Cetak Laporan Resmi
-                </button>
+                
+                <div class="flex items-center gap-3 flex-1 max-w-md md:justify-end">
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
+                        <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang, ruangan, kode, atau pemilik..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
+                        🖨️ Cetak
+                    </button>
+                </div>
             </div>
+            
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -230,7 +248,8 @@
                             <th class="p-3.5">Kode Registrasi</th>
                             <th class="p-3.5">Nama Spesifikasi Aset</th>
                             <th class="p-3.5">Tahun</th>
-                            <th class="p-3.5">Unit Penanggung Jawab</th>
+                            <th class="p-3.5">Lokasi Ruangan</th>
+                            <th class="p-3.5">Unit PJ</th>
                             <th class="p-3.5 text-center">Kondisi</th>
                         </tr>
                     </thead>
@@ -268,19 +287,16 @@
         let html5QrcodeScanner = null;
         let kodeAsetSedangDilihat = "";
         let varChartKondisiAset = null;
+        let memoriLokalDataAset = []; // Menyimpan salinan data dari cloud untuk fitur pencarian instan
 
-        // ================= JALUR SISTEM KEAMANAN LOGIN (BARU) =================
-        
-        // Memeriksa status login setiap kali halaman dibuka browser
+        // ================= SISTEM AUTHENTICATION SECURITY =================
         async function cekStatusSesiUser() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
-                // Jika sudah login, hilangkan form login dan tampilkan isi aplikasi
                 document.getElementById('form-login-container').classList.add('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
                 tampilkanTabel();
             } else {
-                // Jika belum login, pastikan form login mengunci layar monitor
                 document.getElementById('form-login-container').classList.remove('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.add('hidden');
             }
@@ -292,37 +308,46 @@
             const btn = document.getElementById('btn-login');
 
             if (!email || !password) return alert("Harap isi email dan password!");
-
-            btn.innerText = "Memverifikasi...";
-            btn.disabled = true;
+            btn.innerText = "Memverifikasi..."; btn.disabled = true;
 
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-
             if (error) {
                 alert("Gagal masuk: " + error.message);
-                btn.innerText = "Masuk ke Sistem";
-                btn.disabled = false;
+                btn.innerText = "Masuk ke Sistem"; btn.disabled = false;
             } else {
-                btn.innerText = "Masuk ke Sistem";
-                btn.disabled = false;
-                cekStatusSesiUser(); // Refresh tampilan dasbor setelah berhasil login
+                btn.innerText = "Masuk ke Sistem"; btn.disabled = false;
+                cekStatusSesiUser();
             }
         }
 
         async function prosesLogout() {
-            const { error } = await _supabase.auth.signOut();
-            cekStatusSesiUser(); // Kunci kembali layar setelah user logout
+            await _supabase.auth.signOut();
+            cekStatusSesiUser();
         }
 
-        // Pantau perubahan sesi login secara dinamis
         _supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN') cekStatusSesiUser();
-            if (event === 'SIGNED_OUT') cekStatusSesiUser();
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') cekStatusSesiUser();
         });
 
+        // ================= FUNGSI BARU: LOGIKA PENCARIAN PINTAR (REAL-TIME FILTER) =================
+        function filterPencarianTabelAset() {
+            const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
+            
+            // Saring data dari memori lokal tanpa membebani kuota request ke cloud Supabase berkali-kali
+            const hasilSaring = memoriLokalDataAset.filter(item => {
+                const nama = (item.nama || "").toLowerCase();
+                const kode = (item.kode || "").toLowerCase();
+                const ruangan = (item.ruangan || "").toLowerCase();
+                const pemilik = (item.pemilik || "").toLowerCase();
+                
+                return nama.includes(kataKunci) || kode.includes(kataKunci) || ruangan.includes(kataKunci) || pemilik.includes(kataKunci);
+            });
+
+            // Gambar ulang isi baris tabel berdasarkan hasil pencarian
+            renderBarisTabelSecaraFisik(hasilSaring);
+        }
 
         // ================= DATABASE & GRAPHIC LOGIC =================
-
         async function alexAmbilData() {
             let { data, error } = await _supabase.from('aset_barang').select('*').order('id', { ascending: true });
             if (error) { console.error(error); return []; }
@@ -362,24 +387,34 @@
         }
 
         async function tampilkanTabel() {
-            const databaseAset = await alexAmbilData();
+            // Ambil data segar dari cloud, lalu amankan di memori lokal javascript
+            memoriLokalDataAset = await alexAmbilData();
+            
+            // Perbarui visualisasi chart lingkaran
+            perbaruiDashboardGrafik(memoriLokalDataAset);
+            
+            // Render baris tabel data ke layar
+            renderBarisTabelSecaraFisik(memoriLokalDataAset);
+        }
+
+        // Fungsi khusus memetakan array data menjadi baris tabel HTML
+        function renderBarisTabelSecaraFisik(arrayData) {
             const tabel = document.getElementById('tabel-aset');
             if(!tabel) return;
             tabel.innerHTML = '';
             
-            perbaruiDashboardGrafik(databaseAset);
-            
-            databaseAset.forEach(aset => {
+            arrayData.forEach(aset => {
                 let warnaStatus = "bg-emerald-50 text-emerald-700 border border-emerald-200/50";
                 if(aset.status === "Rusak Ringan") warnaStatus = "bg-amber-50 text-amber-700 border border-amber-200/50";
                 if(aset.status === "Rusak Berat") warnaStatus = "bg-rose-50 text-rose-700 border border-rose-200/50";
                 if(aset.status === "Hilang") warnaStatus = "bg-slate-100 text-slate-700 border border-slate-200/50";
 
                 tabel.innerHTML += `
-                    <tr class="hover:bg-slate-50/80 cursor-pointer transition-all duration-150" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
+                    <tr class="hover:bg-slate-50/80 cursor-pointer transition-all duration-150" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}', '${aset.ruangan || '-'}')">
                         <td class="p-3.5 font-mono font-bold text-blue-600">${aset.kode}</td>
                         <td class="p-3.5 font-semibold text-slate-900">${aset.nama}</td>
                         <td class="p-3.5 text-slate-500 font-medium">${aset.tahun || '-'}</td>
+                        <td class="p-3.5 text-slate-600 font-medium">📍 ${aset.ruangan || '-'}</td>
                         <td class="p-3.5 text-slate-500">${aset.pemilik}</td>
                         <td class="p-3.5 text-center">
                             <span class="${warnaStatus} px-3 py-1 rounded-full text-xs font-bold tracking-wide">${aset.status}</span>
@@ -394,13 +429,13 @@
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
             const tahunBeli = document.getElementById('tahun-beli').value;
+            const ruanganDipilih = document.getElementById('lokasi-ruangan').value; // Ambil nilai ruangan baru
             const fotoFile = document.getElementById('foto-input').files[0];
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
             const btnSimpan = document.getElementById('btn-simpan');
-            btnSimpan.innerText = "Mengunggah Data...";
-            btnSimpan.disabled = true;
+            btnSimpan.innerText = "Mengunggah Data..."; btnSimpan.disabled = true;
 
             const databaseAset = await alexAmbilData();
             const jumlahSama = databaseAset.filter(item => item.kode.includes(kategori) && item.kode.includes(tahunBeli)).length;
@@ -420,23 +455,27 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            const { error } = await _supabase.from('aset_barang').insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload, tahun: tahunBeli }]);
+            // MASUKKAN VARIABEL RUANGAN KE KOLOM 'ruangan' DI SUPABASE (BARU)
+            const { error } = await _supabase.from('aset_barang').insert([{ 
+                kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", 
+                foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih 
+            }]);
 
             if (error) { alert("Gagal menyimpan data: " + error.message); } 
             else {
-                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload);
+                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload, ruanganDipilih);
                 document.getElementById('nama').value = ''; document.getElementById('pemilik').value = ''; document.getElementById('foto-input').value = '';
                 tampilkanTabel();
             }
             btnSimpan.innerText = "Simpan ke Cloud"; btnSimpan.disabled = false;
         }
 
-        function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl) {
+        function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl, ruangan) {
             kodeAsetSedangDilihat = kode;
             document.getElementById('judul-detail').innerText = nama;
             document.getElementById('info-kode').innerHTML = `
                 <span class="text-blue-600 font-mono font-bold">${kode}</span><br>
-                <span class="text-slate-500 font-medium">P. Jawab: ${pemilik}</span>
+                <span class="text-slate-500 font-medium"> PJ: ${pemilik} | Ruang: ${ruangan || '-'}</span>
             `;
             
             const tempatFoto = document.getElementById('tempat-foto');
@@ -471,10 +510,7 @@
             const { error } = await _supabase.from('aset_barang').update({ status: statusBaru }).eq('kode', kodeAsetSedangDilihat);
             if (error) { alert("Gagal update status: " + error.message); } 
             else {
-                const databaseAset = await alexAmbilData();
-                const b = databaseAset.find(item => item.kode === kodeAsetSedangDilihat);
                 tampilkanTabel();
-                lihatDetailAsetLokal(b.kode, b.nama, b.pemilik, b.status, b.foto_url);
                 alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui!`);
             }
         }
@@ -491,7 +527,7 @@
             const barang = databaseAset.find(item => item.kode === decodedText);
             if (barang) {
                 alert("Aset Terdeteksi Otomatis!");
-                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url);
+                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url, barang.ruangan);
             } else {
                 alert(`Kode QR "${decodedText}" tidak ada di database Cloud.`);
             }
@@ -499,7 +535,6 @@
 
         function onScanError(err) {}
 
-        // Jalankan pemeriksaan otentikasi user saat halaman dimuat pertama kali
         cekStatusSesiUser();
     </script>
 </body>
