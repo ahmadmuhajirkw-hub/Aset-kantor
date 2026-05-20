@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Aset Kantor Online - Supabase</title>
+    <title>Sistem Aset Kantor Online - Supabase + Foto</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-100 font-sans p-4 md:p-6">
@@ -16,7 +15,7 @@
         
         <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md">
             <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor (ONLINE)</h1>
-            <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud</p>
+            <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud + Foto</p>
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md">
@@ -49,7 +48,13 @@
                         <label class="block text-sm font-medium text-gray-700">Kepemilikan</label>
                         <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
-                    <button onclick="simpanAset()" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
+                        <input type="file" id="foto-input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    </div>
+
+                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
                         Simpan & Kirim ke Cloud
                     </button>
                 </div>
@@ -58,6 +63,11 @@
             <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
                 <h3 id="judul-detail" class="text-lg font-bold mb-2 text-gray-800">QR Code Terbuat</h3>
                 <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih</p>
+                
+                <div id="tempat-foto" class="mb-4 hidden">
+                    <img id="foto-tampilan" src="" alt="Foto Aset" class="w-40 h-40 object-cover rounded-lg shadow-md border">
+                </div>
+
                 <div id="tempat-qr" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
                 <div id="area-update-status" class="hidden w-full">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ubah Kondisi Barang:</label>
@@ -91,7 +101,7 @@
     </div>
 
     <script>
-        // MASUKKAN DETAIL ALAMAT SUPABASE KAMU DI SINI
+        // PENTING: Ganti dengan kredensial Supabase milikmu sendiri seperti kemarin
         const SUPABASE_URL = "https://jrpeyrcwqvlruvsmnasn.supabase.co/rest/v1/";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpycGV5cmN3cXZscnV2c21uYXNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTMzOTUsImV4cCI6MjA5NDc4OTM5NX0.as47qAMflFu7OqTk9zeoCyGobhVt3LtTUoyrsM9E1zg";
         
@@ -99,22 +109,14 @@
         let html5QrcodeScanner = null;
         let kodeAsetSedangDilihat = "";
 
-        // Fungsi Baru: Mengambil data langsung dari database online Supabase
-        async function ambilDataDariSupabase() {
-            let { data: aset_barang, error } = await _supabase
-                .from('aset_barang')
-                .select('*')
-                .order('id', { ascending: true });
-
-            if (error) {
-                console.error("Gagal ambil data:", error);
-                return [];
-            }
-            return aset_barang || [];
+        async function alexAmbilData() {
+            let { data, error } = await _supabase.from('aset_barang').select('*').order('id', { ascending: true });
+            if (error) { console.error(error); return []; }
+            return data || [];
         }
 
         async function tampilkanTabel() {
-            const databaseAset = await ambilDataDariSupabase();
+            const databaseAset = await alexAmbilData();
             const tabel = document.getElementById('tabel-aset');
             tabel.innerHTML = '';
             
@@ -125,7 +127,7 @@
                 if(aset.status === "Hilang") warnaStatus = "bg-gray-200 text-gray-800";
 
                 tabel.innerHTML += `
-                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}')">
+                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
                         <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
                         <td class="p-3 border-b font-medium">${aset.nama}</td>
                         <td class="p-3 border-b">${aset.pemilik}</td>
@@ -141,31 +143,68 @@
             const nama = document.getElementById('nama').value;
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
+            const fotoFile = document.getElementById('foto-input').files[0];
             const tahun = "2026";
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
-            const databaseAset = await ambilDataDariSupabase();
+            // Loading state agar tombol tidak diklik dua kali saat proses upload
+            const btnSimpan = document.getElementById('btn-simpan');
+            btnSimpan.innerText = "Sedang Mengunggah data...";
+            btnSimpan.disabled = true;
+
+            const databaseAset = await alexAmbilData();
             const jumlahKategoriSama = databaseAset.filter(item => item.kode.includes(kategori)).length;
             const nomorUrut = String(jumlahKategoriSama + 1).padStart(3, '0');
             const kodeBarang = `AST-${kategori}-${tahun}-${nomorUrut}`;
 
-            // MEMASUKKAN DATA KE SUPABASE CLOUD (BARU)
+            let urlFotoHasilUpload = "";
+
+            // LOGIKA UPLOAD FOTO KE SUPABASE STORAGE (BARU)
+            if (fotoFile) {
+                const namaFileUnik = `${kodeBarang}-${Date.now()}.${fotoFile.name.split('.').pop()}`;
+                
+                const { data: uploadData, error: uploadError } = await _supabase
+                    .storage
+                    .from('foto_aset')
+                    .upload(namaFileUnik, fotoFile);
+
+                if (uploadError) {
+                    alert("Gagal upload gambar: " + uploadError.message);
+                    btnSimpan.innerText = "Simpan & Kirim ke Cloud";
+                    btnSimpan.disabled = false;
+                    return;
+                }
+
+                // Ambil link URL publik dari foto yang berhasil di-upload
+                const { data: urlData } = _supabase
+                    .storage
+                    .from('foto_aset')
+                    .getPublicUrl(namaFileUnik);
+                
+                urlFotoHasilUpload = urlData.publicUrl;
+            }
+
+            // SIMPAN DATA KE TABEL DATABASE (TERMASUK URL FOTO)
             const { error } = await _supabase
                 .from('aset_barang')
-                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus" }]);
+                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload }]);
 
             if (error) {
-                alert("Gagal menyimpan ke Cloud: " + error.message);
+                alert("Gagal menyimpan data: " + error.message);
             } else {
-                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus");
+                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload);
                 document.getElementById('nama').value = '';
                 document.getElementById('pemilik').value = '';
+                document.getElementById('foto-input').value = ''; // Reset inputan file
                 tampilkanTabel();
             }
+
+            btnSimpan.innerText = "Simpan & Kirim ke Cloud";
+            btnSimpan.disabled = false;
         }
 
-        function lihatDetailAsetLokal(kode, nama, pemilik, status) {
+        function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl) {
             kodeAsetSedangDilihat = kode;
             document.getElementById('judul-detail').innerText = nama;
             document.getElementById('info-kode').innerHTML = `
@@ -174,26 +213,33 @@
                 Status Saat Ini: <span class="font-bold">${status}</span>
             `;
             
+            // LOGIKA MENAMPILKAN FOTO (BARU)
+            const tempatFoto = document.getElementById('tempat-foto');
+            const imgTampilan = document.getElementById('foto-tampilan');
+            if (fotoUrl && fotoUrl !== "null" && fotoUrl !== "") {
+                imgTampilan.src = fotoUrl;
+                tempatFoto.classList.remove('hidden');
+            } else {
+                tempatFoto.classList.add('hidden');
+            }
+
             document.getElementById('tempat-qr').innerHTML = '';
             new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 130, height: 130 });
             document.getElementById('area-update-status').classList.remove('hidden');
             document.getElementById('ubah-status').value = status;
         }
 
-        // FUNGSI BARU: Mengubah status di database Supabase Cloud
         async function updateKondisiBarang() {
             const statusBaru = document.getElementById('ubah-status').value;
-            
-            const { error } = await _supabase
-                .from('aset_barang')
-                .update({ status: statusBaru })
-                .eq('kode', kodeAsetSedangDilihat);
+            const { error } = await _supabase.from('aset_barang').update({ status: statusBaru }).eq('kode', kodeAsetSedangDilihat);
 
-            if (error) {
-                alert("Gagal update status di cloud: " + error.message);
-            } else {
+            if (error) { alert("Gagal update status: " + error.message); } 
+            else {
+                const databaseAset = await alexAmbilData();
+                const b = databaseAset.find(item => item.kode === kodeAsetSedangDilihat);
                 tampilkanTabel();
-                alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui di Cloud!`);
+                lihatDetailAsetLokal(b.kode, b.nama, b.pemilik, b.status, b.foto_url);
+                alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui!`);
             }
         }
 
@@ -205,12 +251,12 @@
 
         async function onScanSuccess(decodedText, decodedResult) {
             html5QrcodeScanner.clear();
-            const databaseAset = await ambilDataDariSupabase();
+            const databaseAset = await alexAmbilData();
             const barang = databaseAset.find(item => item.kode === decodedText);
             
             if (barang) {
                 alert(`Aset Terdeteksi Otomatis!`);
-                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status);
+                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url);
             } else {
                 alert(`Kode QR "${decodedText}" tidak ada di database Cloud.`);
             }
