@@ -8,168 +8,263 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        /* Gaya Tampilan Cetak (Print Layout) Otomatis */
-        @media print {
-            /* Sembunyikan semua elemen navigasi, form, scanner, dan tombol saat dicetak */
-            .non-cetak, 
-            #reader,
-            button,
-            input,
-            select,
-            #box-detail,
-            .bg-blue-600 {
-                display: none !important;
-            }
-            
-            /* Atur ulang container utama agar penuh memenuhi kertas A4 */
-            body {
-                background-color: white !important;
-                padding: 0 !important;
-                color: #000 !important;
-            }
-            .max-w-4xl {
-                max-width: 100% !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
-            
-            /* Tampilkan KOP Surat Resmi dan Lembar Pengesahan Tanda Tangan */
-            .kop-surat-resmi,
-            .area-tanda-tangan {
-                display: block !important;
-            }
-
-            /* Desain Tabel Standar Dokumen Negara/Dinas */
-            table {
-                width: 100% !important;
-                border: 1px solid #000 !important;
-                border-collapse: collapse !important;
-                margin-top: 20px !important;
-            }
-            th {
-                background-color: #f1f5f9 !important;
-                color: #000 !important;
-                border: 1px solid #000 !important;
-                text-transform: uppercase !important;
-                font-size: 10pt !important;
-                padding: 8px !important;
-            }
-            td {
-                border: 1px solid #000 !important;
-                color: #000 !important;
-                font-size: 10pt !important;
-                padding: 8px !important;
-            }
-            .status-badge {
-                background: none !important;
-                color: black !important;
-                padding: 0 !important;
-                font-weight: bold !important;
-            }
-        }
-        
-        /* Elemen ini disembunyikan di layar monitor komputer/HP normal */
-        .kop-surat-resmi,
-        .area-tanda-tangan {
-            display: none;
-        }
-    </style>
 </head>
-<body class="bg-slate-100 font-sans p-3 md:p-6 text-slate-800">
+<body class="bg-gray-100 font-sans p-4 md:p-6">
 
     <div class="max-w-4xl mx-auto space-y-6">
         
-        <div class="kop-surat-resmi text-center border-b-4 border-double border-slate-900 pb-3 mb-6">
-            <h1 class="text-xl font-bold uppercase tracking-wide text-black">Pemerintah Kabupaten Nagan Raya</h1>
-            <h2 class="text-lg font-semibold uppercase text-black">Badan Perencanaan Pembangunan Daerah (BAPPEDA)</h2>
-            <p class="text-xs italic text-slate-600">Suka Makmue, Kompleks Perkantoran SMT, Kode Pos 23671</p>
-            <h3 class="text-md font-bold uppercase mt-6 tracking-wide underline text-center">Laporan Rekapitulasi Inventarisasi Aset Kantor</h3>
+        <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md">
+            <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor (ONLINE)</h1>
+            <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud + Foto</p>
         </div>
 
-        <div class="text-center bg-blue-800 text-white p-6 rounded-2xl shadow-lg border-b-4 border-blue-900 non-cetak">
-            <h1 class="text-2xl font-bold tracking-wide">SISTEM INFORMASI ASET DIGITAL</h1>
-            <p class="text-xs opacity-80 mt-1 uppercase tracking-widest font-semibold">Bappeda & Pusdatin Data Management</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 non-cetak">
-            
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-md font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2 mb-3">
-                        📷 SCAN KODE QR
-                    </h2>
-                    <p class="text-xs text-slate-500 mb-4">Aktifkan kamera untuk memindai kode stiker fisik aset barang.</p>
-                </div>
-                <div class="flex flex-col items-center justify-center">
-                    <button onclick="mulaiScanner()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl hover:bg-emerald-700 font-semibold text-sm cursor-pointer shadow-sm transition-all mb-3">
-                        Buka Kamera Scanner
-                    </button>
-                    <div id="reader" class="w-full rounded-xl overflow-hidden border border-dashed border-slate-300 bg-slate-50"></div>
-                </div>
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">📷 Scan QR Aset</h2>
+            <div class="flex flex-col items-center justify-center">
+                <button onclick="mulaiScanner()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-md hover:bg-emerald-700 font-medium cursor-pointer mb-4">
+                    Buka Kamera Scanner
+                </button>
+                <div id="reader" class="w-full max-w-sm rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50"></div>
             </div>
+        </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2 mb-3">📝 INPUT ASET BARU</h3>
-                <div class="space-y-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">Form Input Aset</h3>
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Nama Barang</label>
-                        <input type="text" id="nama" placeholder="Contoh: Asus Vivobook 14" class="mt-1 block w-full p-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all">
+                        <label class="block text-sm font-medium text-gray-700">Nama Barang</label>
+                        <input type="text" id="nama" placeholder="Contoh: Laptop ASUS Wing" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Kategori Logistik</label>
-                        <select id="kategori" class="mt-1 block w-full p-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all">
+                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                        <select id="kategori" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="KOMP">Komputer / Laptop</option>
                             <option value="PRNT">Printer</option>
-                            <option value="MEUB">Meja / Kursi / Furnitur</option>
+                            <option value="MEUB">Meja / Kursi</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Unit Kepemilikan</label>
-                        <input type="text" id="pemilik" placeholder="Contoh: Pusdatin Sekretariat" class="mt-1 block w-full p-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all">
+                        <label class="block text-sm font-medium text-gray-700">Kepemilikan</label>
+                        <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
+                    
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Dokumentasi Foto</label>
-                        <input type="file" id="foto-input" accept="image/*" class="mt-1 block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                        <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
+                        <input type="file" id="foto-input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     </div>
-                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-700 text-white py-2.5 rounded-xl hover:bg-blue-800 font-semibold text-sm shadow-sm cursor-pointer transition-all">
-                        Simpan ke Cloud Database
+
+                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
+                        Simpan & Kirim ke Cloud
                     </button>
                 </div>
             </div>
 
-            <div id="box-detail" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center">
-                <h3 id="judul-detail" class="text-md font-bold text-slate-900 mb-1">DATA DETAIL BARANG</h3>
-                <p id="info-kode" class="text-xs text-slate-500 mb-3">Silakan pilih aset di tabel atau lakukan scan QR</p>
+            <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
+                <h3 id="judul-detail" class="text-lg font-bold mb-2 text-gray-800">QR Code Terbuat</h3>
+                <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih</p>
                 
-                <div id="tempat-foto" class="mb-3 hidden">
-                    <img id="foto-tampilan" src="" alt="Foto Aset" class="w-28 h-28 object-cover rounded-xl shadow-inner border border-slate-200">
+                <div id="tempat-foto" class="mb-4 hidden">
+                    <img id="foto-tampilan" src="" alt="Foto Aset" class="w-40 h-40 object-cover rounded-lg shadow-md border">
                 </div>
 
-                <div id="tempat-qr" class="p-2 bg-slate-50 border border-slate-100 rounded-xl mb-3"></div>
-                
-                <div id="area-update-status" class="hidden w-full border-t border-slate-100 pt-3">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Perbarui Kondisi:</label>
-                    <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-blue-200 rounded-lg bg-blue-50 text-blue-900 font-semibold focus:outline-none">
-                        <option value="Bagus">🟢 Bagus</option>
-                        <option value="Rusak Ringan">🟡 Rusak Ringan</option>
-                        <option value="Rusak Berat">🔴 Rusak Berat</option>
-                        <option value="Hilang">⚫ Hilang</option>
+                <div id="tempat-qr" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
+                <div id="area-update-status" class="hidden w-full">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ubah Kondisi Barang:</label>
+                    <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 border border-blue-300 rounded-md bg-blue-50 text-blue-800 font-medium">
+                        <option value="Bagus">Bagus</option>
+                        <option value="Rusak Ringan">Rusak Ringan</option>
+                        <option value="Rusak Berat">Rusak Berat</option>
+                        <option value="Hilang">Hilang</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100 non-cetak">
-                <h3 class="text-md font-bold text-slate-900 uppercase tracking-wider">📋 Live Data Inventaris Aset</h3>
-                <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 cursor-pointer transition-all shadow-sm">
-                    🖨️ Cetak Laporan Resmi
-                </button>
-            </div>
-            
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <h3 class="text-lg font-bold mb-4 text-gray-800">Daftar Semua Aset Kantor (Live Cloud)</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 text-
+                        <tr class="bg-gray-100 text-gray-700 text-sm">
+                            <th class="p-3 border-b">Kode Barang</th>
+                            <th class="p-3 border-b">Nama Barang</th>
+                            <th class="p-3 border-b">Kepemilikan</th>
+                            <th class="p-3 border-b">Kondisi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-aset" class="text-gray-600 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // PENTING: Ganti dengan kredensial Supabase milikmu sendiri seperti kemarin
+        const SUPABASE_URL = "https://jrpeyrcwqvlruvsmnasn.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpycGV5cmN3cXZscnV2c21uYXNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTMzOTUsImV4cCI6MjA5NDc4OTM5NX0.as47qAMflFu7OqTk9zeoCyGobhVt3LtTUoyrsM9E1zg";
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let html5QrcodeScanner = null;
+        let kodeAsetSedangDilihat = "";
+
+        async function alexAmbilData() {
+            let { data, error } = await _supabase.from('aset_barang').select('*').order('id', { ascending: true });
+            if (error) { console.error(error); return []; }
+            return data || [];
+        }
+
+        async function tampilkanTabel() {
+            const databaseAset = await alexAmbilData();
+            const tabel = document.getElementById('tabel-aset');
+            tabel.innerHTML = '';
+            
+            databaseAset.forEach(aset => {
+                let warnaStatus = "bg-green-100 text-green-800";
+                if(aset.status === "Rusak Ringan") warnaStatus = "bg-yellow-100 text-yellow-800";
+                if(aset.status === "Rusak Berat") warnaStatus = "bg-red-100 text-red-800";
+                if(aset.status === "Hilang") warnaStatus = "bg-gray-200 text-gray-800";
+
+                tabel.innerHTML += `
+                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
+                        <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
+                        <td class="p-3 border-b font-medium">${aset.nama}</td>
+                        <td class="p-3 border-b">${aset.pemilik}</td>
+                        <td class="p-3 border-b">
+                            <span class="${warnaStatus} px-2.5 py-1 rounded-full text-xs font-semibold">${aset.status}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function simpanAset() {
+            const nama = document.getElementById('nama').value;
+            const kategori = document.getElementById('kategori').value;
+            const pemilik = document.getElementById('pemilik').value;
+            const fotoFile = document.getElementById('foto-input').files[0];
+            const tahun = "2026";
+
+            if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
+
+            // Loading state agar tombol tidak diklik dua kali saat proses upload
+            const btnSimpan = document.getElementById('btn-simpan');
+            btnSimpan.innerText = "Sedang Mengunggah data...";
+            btnSimpan.disabled = true;
+
+            const databaseAset = await alexAmbilData();
+            const jumlahKategoriSama = databaseAset.filter(item => item.kode.includes(kategori)).length;
+            const nomorUrut = String(jumlahKategoriSama + 1).padStart(3, '0');
+            const kodeBarang = `AST-${kategori}-${tahun}-${nomorUrut}`;
+
+            let urlFotoHasilUpload = "";
+
+            // LOGIKA UPLOAD FOTO KE SUPABASE STORAGE (BARU)
+            if (fotoFile) {
+                const namaFileUnik = `${kodeBarang}-${Date.now()}.${fotoFile.name.split('.').pop()}`;
+                
+                const { data: uploadData, error: uploadError } = await _supabase
+                    .storage
+                    .from('foto_aset')
+                    .upload(namaFileUnik, fotoFile);
+
+                if (uploadError) {
+                    alert("Gagal upload gambar: " + uploadError.message);
+                    btnSimpan.innerText = "Simpan & Kirim ke Cloud";
+                    btnSimpan.disabled = false;
+                    return;
+                }
+
+                // Ambil link URL publik dari foto yang berhasil di-upload
+                const { data: urlData } = _supabase
+                    .storage
+                    .from('foto_aset')
+                    .getPublicUrl(namaFileUnik);
+                
+                urlFotoHasilUpload = urlData.publicUrl;
+            }
+
+            // SIMPAN DATA KE TABEL DATABASE (TERMASUK URL FOTO)
+            const { error } = await _supabase
+                .from('aset_barang')
+                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload }]);
+
+            if (error) {
+                alert("Gagal menyimpan data: " + error.message);
+            } else {
+                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload);
+                document.getElementById('nama').value = '';
+                document.getElementById('pemilik').value = '';
+                document.getElementById('foto-input').value = ''; // Reset inputan file
+                tampilkanTabel();
+            }
+
+            btnSimpan.innerText = "Simpan & Kirim ke Cloud";
+            btnSimpan.disabled = false;
+        }
+
+        function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl) {
+            kodeAsetSedangDilihat = kode;
+            document.getElementById('judul-detail').innerText = nama;
+            document.getElementById('info-kode').innerHTML = `
+                <b class="text-blue-600">${kode}</b><br>
+                Penanggung Jawab: ${pemilik}<br>
+                Status Saat Ini: <span class="font-bold">${status}</span>
+            `;
+            
+            // LOGIKA MENAMPILKAN FOTO (BARU)
+            const tempatFoto = document.getElementById('tempat-foto');
+            const imgTampilan = document.getElementById('foto-tampilan');
+            if (fotoUrl && fotoUrl !== "null" && fotoUrl !== "") {
+                imgTampilan.src = fotoUrl;
+                tempatFoto.classList.remove('hidden');
+            } else {
+                tempatFoto.classList.add('hidden');
+            }
+
+            document.getElementById('tempat-qr').innerHTML = '';
+            new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 130, height: 130 });
+            document.getElementById('area-update-status').classList.remove('hidden');
+            document.getElementById('ubah-status').value = status;
+        }
+
+        async function updateKondisiBarang() {
+            const statusBaru = document.getElementById('ubah-status').value;
+            const { error } = await _supabase.from('aset_barang').update({ status: statusBaru }).eq('kode', kodeAsetSedangDilihat);
+
+            if (error) { alert("Gagal update status: " + error.message); } 
+            else {
+                const databaseAset = await alexAmbilData();
+                const b = databaseAset.find(item => item.kode === kodeAsetSedangDilihat);
+                tampilkanTabel();
+                lihatDetailAsetLokal(b.kode, b.nama, b.pemilik, b.status, b.foto_url);
+                alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui!`);
+            }
+        }
+
+        function mulaiScanner() {
+            if (html5QrcodeScanner) { html5QrcodeScanner.clear(); }
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
+        }
+
+        async function onScanSuccess(decodedText, decodedResult) {
+            html5QrcodeScanner.clear();
+            const databaseAset = await alexAmbilData();
+            const barang = databaseAset.find(item => item.kode === decodedText);
+            
+            if (barang) {
+                alert(`Aset Terdeteksi Otomatis!`);
+                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url);
+            } else {
+                alert(`Kode QR "${decodedText}" tidak ada di database Cloud.`);
+            }
+        }
+
+        function onScanError(err) {}
+
+        tampilkanTabel();
+    </script>
+</body>
+</html>
