@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Aset Kantor Online - Supabase + Foto</title>
+    <title>Sistem Informasi Manajemen Aset Kantor (SIMAK)</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -17,8 +17,7 @@
             button,
             input,
             select,
-            #box-detail,
-            .bg-blue-600 {
+            #box-detail {
                 display: none !important;
             }
             
@@ -27,7 +26,7 @@
                 padding: 0 !important;
                 color: #000 !important;
             }
-            .max-w-4xl {
+            .max-w-5xl {
                 max-width: 100% !important;
                 box-shadow: none !important;
                 padding: 0 !important;
@@ -66,9 +65,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans p-4 md:p-6 text-slate-800">
+<body class="bg-[#f8fafc] font-sans antialiased p-4 md:p-8 text-slate-800">
 
-    <div class="max-w-4xl mx-auto space-y-6">
+    <div class="max-w-5xl mx-auto space-y-6">
         
         <div class="kop-surat-dinas text-center border-b-4 border-double border-black pb-3 mb-6">
             <h1 class="text-xl font-bold uppercase tracking-wide text-black">Pemerintah Kabupaten Nagan Raya</h1>
@@ -77,71 +76,84 @@
             <h3 class="text-md font-bold uppercase mt-6 tracking-wide underline text-center text-black">Laporan Rekapitulasi Inventarisasi Aset Kantor</h3>
         </div>
 
-        <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md non-cetak">
-            <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor (ONLINE)</h1>
-            <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud + Foto</p>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-md non-cetak">
-            <h2 class="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">📷 Scan QR Aset</h2>
-            <div class="flex flex-col items-center justify-center">
-                <button onclick="mulaiScanner()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-md hover:bg-emerald-700 font-medium cursor-pointer mb-4">
-                    Buka Kamera Scanner
-                </button>
-                <div id="reader" class="w-full max-w-sm rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50"></div>
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 md:p-8 rounded-2xl shadow-xl shadow-blue-900/10 flex flex-col md:flex-row justify-between items-center gap-4 non-cetak border-b border-white/10">
+            <div class="text-center md:text-left">
+                <span class="bg-white/10 text-white border border-white/20 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Manajemen Internal</span>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1.5">SIMAK DIGITAL</h1>
+                <p class="text-xs text-blue-100/80 mt-1 font-medium">Data Terintegrasi Cloud & Validasi Kode QR Real-Time</p>
+            </div>
+            <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Database Terhubung</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 non-cetak">
-            <div class="bg-white p-6 rounded-xl shadow-md">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Form Input Aset</h3>
-                <div class="space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 non-cetak">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded bg-blue-600 block"></span> Registrasi Aset Baru
+                    </h3>
+                </div>
+                <div class="space-y-3.5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Nama Barang</label>
-                        <input type="text" id="nama" placeholder="Contoh: Laptop ASUS Wing" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Spesifikasi Aset</label>
+                        <input type="text" id="nama" placeholder="Contoh: Laptop ASUS Wing" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</label>
+                            <select id="kategori" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                                <option value="KOMP">💻 Komputer</option>
+                                <option value="PRNT">🖨️ Printer</option>
+                                <option value="MEUB">🪑 Furnitur</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Tahun Anggaran</label>
+                            <select id="tahun-beli" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                        <select id="kategori" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                            <option value="KOMP">Komputer / Laptop</option>
-                            <option value="PRNT">Printer</option>
-                            <option value="MEUB">Meja / Kursi</option>
-                        </select>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Unit / Penanggung Jawab</label>
+                        <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Tahun Pembelian</label>
-                        <select id="tahun-beli" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                            <option value="2026">2026</option>
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                        </select>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Unggah Foto Fisik</label>
+                        <input type="file" id="foto-input" accept="image/*" class="block w-full text-xs text-slate-500 border border-slate-200 rounded-xl bg-slate-50 file:mr-3 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Kepemilikan</label>
-                        <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
-                        <input type="file" id="foto-input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    </div>
-                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
+                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer active:scale-[0.98]">
                         Simpan & Kirim ke Cloud
                     </button>
                 </div>
             </div>
 
-            <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
-                <h3 id="judul-detail" class="text-lg font-bold mb-2 text-gray-800">QR Code Terbuat</h3>
-                <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih</p>
-                <div id="tempat-foto" class="mb-4 hidden">
-                    <img id="foto-tampilan" src="" alt="Foto Aset" class="w-40 h-40 object-cover rounded-lg shadow-md border">
+            <div id="box-detail" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col items-center justify-center text-center lg:col-span-1">
+                <div class="w-full border-b border-slate-100 pb-3 mb-4 text-left">
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded bg-indigo-600 block"></span> Informasi Detail Aset
+                    </h3>
                 </div>
-                <div id="tempat-qr" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
-                <div id="area-update-status" class="hidden w-full">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ubah Kondisi Barang:</label>
-                    <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 border border-blue-300 rounded-md bg-blue-50 text-blue-800 font-medium">
+                
+                <h3 id="judul-detail" class="text-base font-bold text-slate-900 mb-1">QR Code Terbuat</h3>
+                <p id="info-kode" class="text-xs text-slate-400 mb-4">Belum ada barang dipilih</p>
+                
+                <div id="tempat-foto" class="mb-4 hidden">
+                    <img id="foto-tampilan" src="" alt="Foto Aset" class="w-32 h-32 object-cover rounded-2xl shadow-md border border-slate-200">
+                </div>
+
+                <div id="tempat-qr" class="p-3 bg-slate-50 border border-slate-100 rounded-2xl mb-4 transition-all"></div>
+                
+                <div id="area-update-status" class="hidden w-full border-t border-slate-100 pt-3">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ubah Status Kondisi</label>
+                    <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-blue-200 rounded-xl bg-blue-50 text-blue-900 font-bold focus:outline-none cursor-pointer">
                         <option value="Bagus">Bagus</option>
                         <option value="Rusak Ringan">Rusak Ringan</option>
                         <option value="Rusak Berat">Rusak Berat</option>
@@ -149,12 +161,32 @@
                     </select>
                 </div>
             </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col justify-between lg:col-span-1">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3 mb-3 uppercase tracking-wider">
+                        <span class="w-1.5 h-4 rounded bg-emerald-600 block"></span> Pemindai QR Lapangan
+                    </h2>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">Arahkan kamera ke stiker QR Code yang tertempel pada perangkat aset untuk melakukan pelacakan otomatis.</p>
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <button onclick="mulaiScanner()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-semibold text-sm cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]">
+                        Buka Kamera Scanner
+                    </button>
+                    <div id="reader" class="w-full rounded-xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-md">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 non-cetak">
-                <h3 class="text-lg font-bold text-gray-800">Daftar Semua Aset Kantor (Live Cloud)</h3>
-                <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 cursor-pointer shadow-sm transition-all">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5 pb-3 border-b border-slate-100 non-cetak">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded bg-slate-900 block"></span> Logistik & Data Inventaris
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Seluruh daftar barang yang tercatat secara real-time</p>
+                </div>
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 active:scale-[0.97]">
                     🖨️ Cetak Laporan Resmi
                 </button>
             </div>
@@ -162,15 +194,15 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-gray-100 text-gray-700 text-sm">
-                            <th class="p-3 border-b">Kode Barang</th>
-                            <th class="p-3 border-b">Nama Barang</th>
-                            <th class="p-3 border-b">Tahun</th>
-                            <th class="p-3 border-b">Kepemilikan</th>
-                            <th class="p-3 border-b">Kondisi</th>
+                        <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200/60">
+                            <th class="p-3.5">Kode Registrasi</th>
+                            <th class="p-3.5">Nama Spesifikasi Aset</th>
+                            <th class="p-3.5">Tahun</th>
+                            <th class="p-3.5">Unit Penanggung Jawab</th>
+                            <th class="p-3.5 text-center">Kondisi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabel-aset" class="text-gray-600 text-sm"></tbody>
+                    <tbody id="tabel-aset" class="text-gray-600 text-sm divide-y divide-slate-100"></tbody>
                 </table>
             </div>
 
@@ -186,8 +218,8 @@
                         <td class="w-1/2 p-4 text-center" style="border: none !important; width: 50%;">
                             <p class="mb-1 text-black">Nagan Raya, 20 Mei 2026</p>
                             <p class="font-bold mb-20 text-black">Pengurus Barang / Pengelola Aset</p>
-                            <p class="font-bold underline text-black">Samsuwir</p>
-                            <p class="text-xs text-slate-700 mt-1">NIP. 19930331 202521 1 029</p>
+                            <p class="font-bold underline text-black">Ajir Multimedia</p>
+                            <p class="text-xs text-slate-700 mt-1">NIP. 19970628 202603 1 001</p>
                         </td>
                     </tr>
                 </table>
@@ -216,19 +248,19 @@
             tabel.innerHTML = '';
             
             databaseAset.forEach(aset => {
-                let warnaStatus = "bg-green-100 text-green-800";
-                if(aset.status === "Rusak Ringan") warnaStatus = "bg-yellow-100 text-yellow-800";
-                if(aset.status === "Rusak Berat") warnaStatus = "bg-red-100 text-red-800";
-                if(aset.status === "Hilang") warnaStatus = "bg-gray-200 text-gray-800";
+                let warnaStatus = "bg-emerald-50 text-emerald-700 border border-emerald-200/50";
+                if(aset.status === "Rusak Ringan") warnaStatus = "bg-amber-50 text-amber-700 border border-amber-200/50";
+                if(aset.status === "Rusak Berat") warnaStatus = "bg-rose-50 text-rose-700 border border-rose-200/50";
+                if(aset.status === "Hilang") warnaStatus = "bg-slate-100 text-slate-700 border border-slate-200/50";
 
                 tabel.innerHTML += `
-                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
-                        <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
-                        <td class="p-3 border-b font-medium text-slate-900">${aset.nama}</td>
-                        <td class="p-3 border-b">${aset.tahun || '-'}</td>
-                        <td class="p-3 border-b">${aset.pemilik}</td>
-                        <td class="p-3 border-b">
-                            <span class="${warnaStatus} px-2.5 py-1 rounded-full text-xs font-semibold">${aset.status}</span>
+                    <tr class="hover:bg-slate-50/80 cursor-pointer transition-all duration-150" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
+                        <td class="p-3.5 font-mono font-bold text-blue-600">${aset.kode}</td>
+                        <td class="p-3.5 font-semibold text-slate-900">${aset.nama}</td>
+                        <td class="p-3.5 text-slate-500 font-medium">${aset.tahun || '-'}</td>
+                        <td class="p-3.5 text-slate-500">${aset.pemilik}</td>
+                        <td class="p-3.5 text-center">
+                            <span class="${warnaStatus} px-3 py-1 rounded-full text-xs font-bold tracking-wide">${aset.status}</span>
                         </td>
                     </tr>
                 `;
@@ -239,18 +271,16 @@
             const nama = document.getElementById('nama').value;
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
-            const tahunBeli = document.getElementById('tahun-beli').value; // Mengambil nilai tahun dari form
+            const tahunBeli = document.getElementById('tahun-beli').value;
             const fotoFile = document.getElementById('foto-input').files[0];
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
             const btnSimpan = document.getElementById('btn-simpan');
-            btnSimpan.innerText = "Sedang Mengunggah data...";
+            btnSimpan.innerText = "Mengunggah Data...";
             btnSimpan.disabled = true;
 
             const databaseAset = await alexAmbilData();
-            
-            // Logika penomoran kode urut pintar yang menyaring berdasarkan Kategori DAN Tahun yang dipilih
             const jumlahSama = databaseAset.filter(item => item.kode.includes(kategori) && item.kode.includes(tahunBeli)).length;
             const nomorUrut = String(jumlahSama + 1).padStart(3, '0');
             const kodeBarang = `AST-${kategori}-${tahunBeli}-${nomorUrut}`;
@@ -280,7 +310,6 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            // MENGIRIM DATA SEKALIGUS DATA TAHUN KE SUPABASE (BARU)
             const { error } = await _supabase
                 .from('aset_barang')
                 .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload, tahun: tahunBeli }]);
@@ -303,9 +332,8 @@
             kodeAsetSedangDilihat = kode;
             document.getElementById('judul-detail').innerText = nama;
             document.getElementById('info-kode').innerHTML = `
-                <b class="text-blue-600">${kode}</b><br>
-                Penanggung Jawab: ${pemilik}<br>
-                Status Saat Ini: <span class="font-bold">${status}</span>
+                <span class="text-blue-600 font-mono font-bold">${kode}</span><br>
+                <span class="text-slate-500 font-medium">P. Jawab: ${pemilik}</span>
             `;
             
             const tempatFoto = document.getElementById('tempat-foto');
@@ -318,7 +346,7 @@
             }
 
             document.getElementById('tempat-qr').innerHTML = '';
-            new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 130, height: 130 });
+            new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 120, height: 120 });
             document.getElementById('area-update-status').classList.remove('hidden');
             document.getElementById('ubah-status').value = status;
         }
@@ -339,7 +367,7 @@
 
         function mulaiScanner() {
             if (html5QrcodeScanner) { html5QrcodeScanner.clear(); }
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 220 });
             html5QrcodeScanner.render(onScanSuccess, onScanError);
         }
 
@@ -349,7 +377,7 @@
             const barang = databaseAset.find(item => item.kode === decodedText);
             
             if (barang) {
-                alert(`Aset Terdeteksi Otomatis!`);
+                alert("Aset Terdeteksi Otomatis!");
                 lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url);
             } else {
                 alert(`Kode QR "${decodedText}" tidak ada di database Cloud.`);
