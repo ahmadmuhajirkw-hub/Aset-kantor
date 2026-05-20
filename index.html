@@ -12,7 +12,6 @@
     <style>
         /* Gaya Tampilan Khusus Saat Mode Cetak / Print Kertas A4 */
         @media print {
-            /* Sembunyikan elemen aplikasi digital agar tidak ikut tercetak */
             .non-cetak, 
             #reader,
             button,
@@ -23,7 +22,6 @@
                 display: none !important;
             }
             
-            /* Atur ulang halaman agar penuh memenuhi kertas dokumen */
             body {
                 background-color: white !important;
                 padding: 0 !important;
@@ -35,13 +33,11 @@
                 padding: 0 !important;
             }
             
-            /* Tampilkan KOP Surat Dinas dan Lembar Tanda Tangan */
             .kop-surat-dinas,
             .lembar-pengesahan {
                 display: block !important;
             }
 
-            /* Format Tabel Standar Pelaporan Resmi */
             table {
                 width: 100% !important;
                 border: 1px solid #000 !important;
@@ -64,7 +60,6 @@
             }
         }
         
-        /* Secara default sembunyikan KOP dan Tanda Tangan di layar laptop/HP normal */
         .kop-surat-dinas,
         .lembar-pengesahan {
             display: none;
@@ -114,6 +109,16 @@
                         </select>
                     </div>
                     <div>
+                        <label class="block text-sm font-medium text-gray-700">Tahun Pembelian</label>
+                        <select id="tahun-beli" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700">Kepemilikan</label>
                         <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
@@ -160,6 +165,7 @@
                         <tr class="bg-gray-100 text-gray-700 text-sm">
                             <th class="p-3 border-b">Kode Barang</th>
                             <th class="p-3 border-b">Nama Barang</th>
+                            <th class="p-3 border-b">Tahun</th>
                             <th class="p-3 border-b">Kepemilikan</th>
                             <th class="p-3 border-b">Kondisi</th>
                         </tr>
@@ -180,7 +186,7 @@
                         <td class="w-1/2 p-4 text-center" style="border: none !important; width: 50%;">
                             <p class="mb-1 text-black">Nagan Raya, 20 Mei 2026</p>
                             <p class="font-bold mb-20 text-black">Pengurus Barang / Pengelola Aset</p>
-                            <p class="font-bold underline text-black">SAMSUWIR</p>
+                            <p class="font-bold underline text-black">Samsuwir</p>
                             <p class="text-xs text-slate-700 mt-1">NIP. 19930331 202521 1 029</p>
                         </td>
                     </tr>
@@ -219,6 +225,7 @@
                     <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
                         <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
                         <td class="p-3 border-b font-medium text-slate-900">${aset.nama}</td>
+                        <td class="p-3 border-b">${aset.tahun || '-'}</td>
                         <td class="p-3 border-b">${aset.pemilik}</td>
                         <td class="p-3 border-b">
                             <span class="${warnaStatus} px-2.5 py-1 rounded-full text-xs font-semibold">${aset.status}</span>
@@ -232,8 +239,8 @@
             const nama = document.getElementById('nama').value;
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
+            const tahunBeli = document.getElementById('tahun-beli').value; // Mengambil nilai tahun dari form
             const fotoFile = document.getElementById('foto-input').files[0];
-            const tahun = "2026";
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
@@ -242,9 +249,11 @@
             btnSimpan.disabled = true;
 
             const databaseAset = await alexAmbilData();
-            const jumlahKategoriSama = databaseAset.filter(item => item.kode.includes(kategori)).length;
-            const nomorUrut = String(jumlahKategoriSama + 1).padStart(3, '0');
-            const kodeBarang = `AST-${kategori}-${tahun}-${nomorUrut}`;
+            
+            // Logika penomoran kode urut pintar yang menyaring berdasarkan Kategori DAN Tahun yang dipilih
+            const jumlahSama = databaseAset.filter(item => item.kode.includes(kategori) && item.kode.includes(tahunBeli)).length;
+            const nomorUrut = String(jumlahSama + 1).padStart(3, '0');
+            const kodeBarang = `AST-${kategori}-${tahunBeli}-${nomorUrut}`;
 
             let urlFotoHasilUpload = "";
 
@@ -271,9 +280,10 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
+            // MENGIRIM DATA SEKALIGUS DATA TAHUN KE SUPABASE (BARU)
             const { error } = await _supabase
                 .from('aset_barang')
-                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload }]);
+                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload, tahun: tahunBeli }]);
 
             if (error) {
                 alert("Gagal menyimpan data: " + error.message);
