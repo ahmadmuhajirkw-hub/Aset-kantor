@@ -8,17 +8,86 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* Gaya Tampilan Khusus Saat Mode Cetak / Print Kertas A4 */
+        @media print {
+            /* Sembunyikan elemen aplikasi digital agar tidak ikut tercetak */
+            .non-cetak, 
+            #reader,
+            button,
+            input,
+            select,
+            #box-detail,
+            .bg-blue-600 {
+                display: none !important;
+            }
+            
+            /* Atur ulang halaman agar penuh memenuhi kertas dokumen */
+            body {
+                background-color: white !important;
+                padding: 0 !important;
+                color: #000 !important;
+            }
+            .max-w-4xl {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            
+            /* Tampilkan KOP Surat Dinas dan Lembar Tanda Tangan */
+            .kop-surat-dinas,
+            .lembar-pengesahan {
+                display: block !important;
+            }
+
+            /* Format Tabel Standar Pelaporan Resmi */
+            table {
+                width: 100% !important;
+                border: 1px solid #000 !important;
+                border-collapse: collapse !important;
+                margin-top: 20px !important;
+            }
+            th {
+                background-color: #f8fafc !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+                text-transform: uppercase !important;
+                font-size: 10pt !important;
+                padding: 10px 8px !important;
+            }
+            td {
+                border: 1px solid #000 !important;
+                color: #000 !important;
+                font-size: 10pt !important;
+                padding: 10px 8px !important;
+            }
+        }
+        
+        /* Secara default sembunyikan KOP dan Tanda Tangan di layar laptop/HP normal */
+        .kop-surat-dinas,
+        .lembar-pengesahan {
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans p-4 md:p-6">
+<body class="bg-gray-100 font-sans p-4 md:p-6 text-slate-800">
 
     <div class="max-w-4xl mx-auto space-y-6">
         
-        <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md">
+        <div class="kop-surat-dinas text-center border-b-4 border-double border-black pb-3 mb-6">
+            <h1 class="text-xl font-bold uppercase tracking-wide text-black">Pemerintah Kabupaten Nagan Raya</h1>
+            <h2 class="text-lg font-semibold uppercase text-black">Badan Perencanaan Pembangunan Daerah (BAPPEDA)</h2>
+            <p class="text-xs italic text-slate-600">Suka Makmue, Kompleks Perkantoran SMT, Kode Pos 23671</p>
+            <h3 class="text-md font-bold uppercase mt-6 tracking-wide underline text-center text-black">Laporan Rekapitulasi Inventarisasi Aset Kantor</h3>
+        </div>
+
+        <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md non-cetak">
             <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor (ONLINE)</h1>
             <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud + Foto</p>
         </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-md">
+        <div class="bg-white p-6 rounded-xl shadow-md non-cetak">
             <h2 class="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">📷 Scan QR Aset</h2>
             <div class="flex flex-col items-center justify-center">
                 <button onclick="mulaiScanner()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-md hover:bg-emerald-700 font-medium cursor-pointer mb-4">
@@ -28,7 +97,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 non-cetak">
             <div class="bg-white p-6 rounded-xl shadow-md">
                 <h3 class="text-lg font-bold mb-4 text-gray-800">Form Input Aset</h3>
                 <div class="space-y-4">
@@ -48,12 +117,10 @@
                         <label class="block text-sm font-medium text-gray-700">Kepemilikan</label>
                         <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
-                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
                         <input type="file" id="foto-input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     </div>
-
                     <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
                         Simpan & Kirim ke Cloud
                     </button>
@@ -63,11 +130,9 @@
             <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
                 <h3 id="judul-detail" class="text-lg font-bold mb-2 text-gray-800">QR Code Terbuat</h3>
                 <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih</p>
-                
                 <div id="tempat-foto" class="mb-4 hidden">
                     <img id="foto-tampilan" src="" alt="Foto Aset" class="w-40 h-40 object-cover rounded-lg shadow-md border">
                 </div>
-
                 <div id="tempat-qr" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
                 <div id="area-update-status" class="hidden w-full">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ubah Kondisi Barang:</label>
@@ -82,7 +147,13 @@
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md">
-            <h3 class="text-lg font-bold mb-4 text-gray-800">Daftar Semua Aset Kantor (Live Cloud)</h3>
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 non-cetak">
+                <h3 class="text-lg font-bold text-gray-800">Daftar Semua Aset Kantor (Live Cloud)</h3>
+                <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 cursor-pointer shadow-sm transition-all">
+                    🖨️ Cetak Laporan Resmi
+                </button>
+            </div>
+            
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -96,12 +167,30 @@
                     <tbody id="tabel-aset" class="text-gray-600 text-sm"></tbody>
                 </table>
             </div>
+
+            <div class="lembar-pengesahan mt-12">
+                <table class="w-full text-center" style="border: none !important; margin-top: 60px;">
+                    <tr style="border: none !important;">
+                        <td class="w-1/2 p-4 text-center" style="border: none !important; width: 50%;">
+                            <p class="mb-1 text-black">Mengetahui,</p>
+                            <p class="font-bold mb-20 text-black">Kepala BAPPEDA Nagan Raya</p>
+                            <p class="font-bold underline text-black">......................................................</p>
+                            <p class="text-xs text-slate-700 mt-1">NIP. .............................................</p>
+                        </td>
+                        <td class="w-1/2 p-4 text-center" style="border: none !important; width: 50%;">
+                            <p class="mb-1 text-black">Nagan Raya, 20 Mei 2026</p>
+                            <p class="font-bold mb-20 text-black">Pengurus Barang / Pengelola Aset</p>
+                            <p class="font-bold underline text-black">Ajir Multimedia</p>
+                            <p class="text-xs text-slate-700 mt-1">NIP. 19970628 202603 1 001</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // PENTING: Ganti dengan kredensial Supabase milikmu sendiri seperti kemarin
         const SUPABASE_URL = "https://jrpeyrcwqvlruvsmnasn.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpycGV5cmN3cXZscnV2c21uYXNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTMzOTUsImV4cCI6MjA5NDc4OTM5NX0.as47qAMflFu7OqTk9zeoCyGobhVt3LtTUoyrsM9E1zg";
         
@@ -129,7 +218,7 @@
                 tabel.innerHTML += `
                     <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}')">
                         <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
-                        <td class="p-3 border-b font-medium">${aset.nama}</td>
+                        <td class="p-3 border-b font-medium text-slate-900">${aset.nama}</td>
                         <td class="p-3 border-b">${aset.pemilik}</td>
                         <td class="p-3 border-b">
                             <span class="${warnaStatus} px-2.5 py-1 rounded-full text-xs font-semibold">${aset.status}</span>
@@ -148,7 +237,6 @@
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
-            // Loading state agar tombol tidak diklik dua kali saat proses upload
             const btnSimpan = document.getElementById('btn-simpan');
             btnSimpan.innerText = "Sedang Mengunggah data...";
             btnSimpan.disabled = true;
@@ -160,7 +248,6 @@
 
             let urlFotoHasilUpload = "";
 
-            // LOGIKA UPLOAD FOTO KE SUPABASE STORAGE (BARU)
             if (fotoFile) {
                 const namaFileUnik = `${kodeBarang}-${Date.now()}.${fotoFile.name.split('.').pop()}`;
                 
@@ -176,7 +263,6 @@
                     return;
                 }
 
-                // Ambil link URL publik dari foto yang berhasil di-upload
                 const { data: urlData } = _supabase
                     .storage
                     .from('foto_aset')
@@ -185,7 +271,6 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            // SIMPAN DATA KE TABEL DATABASE (TERMASUK URL FOTO)
             const { error } = await _supabase
                 .from('aset_barang')
                 .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload }]);
@@ -196,7 +281,7 @@
                 lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload);
                 document.getElementById('nama').value = '';
                 document.getElementById('pemilik').value = '';
-                document.getElementById('foto-input').value = ''; // Reset inputan file
+                document.getElementById('foto-input').value = '';
                 tampilkanTabel();
             }
 
@@ -213,7 +298,6 @@
                 Status Saat Ini: <span class="font-bold">${status}</span>
             `;
             
-            // LOGIKA MENAMPILKAN FOTO (BARU)
             const tempatFoto = document.getElementById('tempat-foto');
             const imgTampilan = document.getElementById('foto-tampilan');
             if (fotoUrl && fotoUrl !== "null" && fotoUrl !== "") {
