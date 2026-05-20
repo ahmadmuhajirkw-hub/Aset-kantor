@@ -11,83 +11,51 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* ================= MANAGEMENT PRINT CSS SYSTEM ================= --> */
-        #area-stiker-print,
-        .kop-surat-dinas,
-        .lembar-pengesahan {
-            display: none;
-        }
+        /* ================= MANAGEMENT PRINT CSS SYSTEM ================= */
+        #area-stiker-print, .kop-surat-dinas, .lembar-pengesahan { display: none; }
 
         @media print {
-            body {
-                background-color: white !important;
-                padding: 0 !important;
-                color: #000 !important;
-            }
-            .max-w-5xl {
-                max-width: 100% !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
-            /* Sembunyikan bagian analitik/grafik saat mencetak laporan resmi A4 */
-            .non-cetak, #reader, button, input, select, #box-detail, #area-grafis-analitik {
-                display: none !important;
-            }
-            .kop-surat-dinas, .lembar-pengesahan {
-                display: block !important;
-            }
-            table {
-                width: 100% !important;
-                border: 1px solid #000 !important;
-                border-collapse: collapse !important;
-                margin-top: 20px !important;
-            }
-            th, td {
-                border: 1px solid #000 !important;
-                color: #000 !important;
-                font-size: 10pt !important;
-                padding: 10px 8px !important;
-            }
+            body { background-color: white !important; padding: 0 !important; color: #000 !important; }
+            .max-w-5xl { max-width: 100% !important; box-shadow: none !important; padding: 0 !important; }
+            .non-cetak, #reader, button, input, select, #box-detail, #area-grafis-analitik, #form-login-container { display: none !important; }
+            .kop-surat-dinas, .lembar-pengesahan { display: block !important; }
+            table { width: 100% !important; border: 1px solid #000 !important; border-collapse: collapse !important; margin-top: 20px !important; }
+            th, td { border: 1px solid #000 !important; color: #000 !important; font-size: 10pt !important; padding: 10px 8px !important; }
 
-            /* SITUASI B: JIKA TOMBOL CETAK STIKER DIKLIK */
-            body.mode-cetak-stiker-aktif {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            body.mode-cetak-stiker-aktif .max-w-5xl {
-                max-width: 100% !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            body.mode-cetak-stiker-aktif .non-cetak,
-            body.mode-cetak-stiker-aktif .kop-surat-dinas,
-            body.mode-cetak-stiker-aktif .lembar-pengesahan,
-            body.mode-cetak-stiker-aktif table,
-            body.mode-cetak-stiker-aktif #reader,
-            body.mode-cetak-stiker-aktif .grid,
-            body.mode-cetak-stiker-aktif #box-detail,
-            body.mode-cetak-stiker-aktif #area-grafis-analitik {
-                display: none !important;
-            }
-            body.mode-cetak-stiker-aktif #area-stiker-print {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: 45mm !important;
-                height: 45mm !important;
-                padding: 2mm !important;
-                margin: 0 auto !important;
-                border: 1px solid #000 !important;
-                box-sizing: border-box !important;
-                page-break-inside: avoid !important;
-            }
+            /* SITUASI B: PRINT STIKER */
+            body.mode-cetak-stiker-aktif { padding: 0 !important; margin: 0 !important; }
+            body.mode-cetak-stiker-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            body.mode-cetak-stiker-aktif .non-cetak, body.mode-cetak-stiker-aktif .kop-surat-dinas, body.mode-cetak-stiker-aktif .lembar-pengesahan, body.mode-cetak-stiker-aktif table, body.mode-cetak-stiker-aktif #reader, body.mode-cetak-stiker-aktif .grid, body.mode-cetak-stiker-aktif #box-detail, body.mode-cetak-stiker-aktif #area-grafis-analitik, body.mode-cetak-stiker-aktif #form-login-container { display: none !important; }
+            body.mode-cetak-stiker-aktif #area-stiker-print { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; width: 45mm !important; height: 45mm !important; padding: 2mm !important; margin: 0 auto !important; border: 1px solid #000 !important; box-sizing: border-box !important; page-break-inside: avoid !important; }
         }
     </style>
 </head>
 <body class="bg-[#f8fafc] font-sans antialiased p-4 md:p-8 text-slate-800">
 
-    <div class="max-w-5xl mx-auto space-y-6">
+    <div id="form-login-container" class="fixed inset-0 bg-slate-100 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full space-y-5">
+            <div class="text-center">
+                <span class="bg-blue-50 text-blue-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Keamanan</span>
+                <h2 class="text-xl font-black text-slate-900 mt-2">SIMAK BAPPEDA</h2>
+                <p class="text-xs text-slate-400 mt-1">Silakan masuk menggunakan akun dinas yang terdaftar</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Email Kantor</label>
+                    <input type="email" id="login-email" placeholder="nama@naganrayakab.go.id" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+                <button onclick="prosesLogin()" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer text-center">
+                    Masuk ke Sistem
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="konten-aplikasi-utama" class="hidden max-w-5xl mx-auto space-y-6">
         
         <div class="kop-surat-dinas text-center border-b-4 border-double border-black pb-3 mb-6">
             <h1 class="text-xl font-bold uppercase tracking-wide text-black">Pemerintah Kabupaten Nagan Raya</h1>
@@ -96,15 +64,20 @@
             <h3 class="text-md font-bold uppercase mt-6 tracking-wide underline text-center text-black">Laporan Rekapitulasi Inventarisasi Aset Kantor</h3>
         </div>
 
-        <div class="text-center bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 md:p-8 rounded-2xl shadow-xl shadow-blue-900/10 flex flex-col md:flex-row justify-between items-center gap-4 non-cetak border-b border-white/10">
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 md:p-8 rounded-2xl shadow-xl shadow-blue-900/10 flex flex-col md:flex-row justify-between items-center gap-4 non-cetak border-b border-white/10">
             <div class="text-center md:text-left">
                 <span class="bg-white/10 text-white border border-white/20 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Manajemen Internal</span>
                 <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1.5">SIMAK DIGITAL</h1>
                 <p class="text-xs text-blue-100/80 mt-1 font-medium">Data Terintegrasi Cloud & Validasi Kode QR Real-Time</p>
             </div>
-            <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm text-xs font-semibold">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Database Terhubung</span>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Database Terhubung</span>
+                </div>
+                <button onclick="prosesLogout()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-xl border border-rose-500 transition-all cursor-pointer">
+                    Keluar 🚪
+                </button>
             </div>
         </div>
 
@@ -142,7 +115,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 non-cetak">
-            
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
                 <div class="border-b border-slate-100 pb-3">
                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
@@ -197,17 +169,13 @@
                         🏷️ Cetak Stiker
                     </button>
                 </div>
-                
                 <div class="flex flex-col items-center justify-center text-center">
                     <h3 id="judul-detail" class="text-base font-bold text-slate-900 mb-1">QR Code Terbuat</h3>
                     <p id="info-kode" class="text-xs text-slate-400 mb-4">Belum ada barang dipilih</p>
-                    
                     <div id="tempat-foto" class="mb-4 hidden">
                         <img id="foto-tampilan" src="" alt="Foto Aset" class="w-32 h-32 object-cover rounded-2xl shadow-md border border-slate-200">
                     </div>
-
                     <div id="tempat-qr" class="p-3 bg-slate-50 border border-slate-100 rounded-2xl mb-4"></div>
-                    
                     <div id="area-update-status" class="hidden w-full border-t border-slate-100 pt-3">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ubah Status Kondisi</label>
                         <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-blue-200 rounded-xl bg-blue-50 text-blue-900 font-bold focus:outline-none cursor-pointer">
@@ -255,7 +223,6 @@
                     🖨️ Cetak Laporan Resmi
                 </button>
             </div>
-            
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -300,7 +267,61 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let html5QrcodeScanner = null;
         let kodeAsetSedangDilihat = "";
-        let varChartKondisiAset = null; // Penampung objek grafik agar bisa di-update
+        let varChartKondisiAset = null;
+
+        // ================= JALUR SISTEM KEAMANAN LOGIN (BARU) =================
+        
+        // Memeriksa status login setiap kali halaman dibuka browser
+        async function cekStatusSesiUser() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                // Jika sudah login, hilangkan form login dan tampilkan isi aplikasi
+                document.getElementById('form-login-container').classList.add('hidden');
+                document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
+                tampilkanTabel();
+            } else {
+                // Jika belum login, pastikan form login mengunci layar monitor
+                document.getElementById('form-login-container').classList.remove('hidden');
+                document.getElementById('konten-aplikasi-utama').classList.add('hidden');
+            }
+        }
+
+        async function prosesLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login');
+
+            if (!email || !password) return alert("Harap isi email dan password!");
+
+            btn.innerText = "Memverifikasi...";
+            btn.disabled = true;
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert("Gagal masuk: " + error.message);
+                btn.innerText = "Masuk ke Sistem";
+                btn.disabled = false;
+            } else {
+                btn.innerText = "Masuk ke Sistem";
+                btn.disabled = false;
+                cekStatusSesiUser(); // Refresh tampilan dasbor setelah berhasil login
+            }
+        }
+
+        async function prosesLogout() {
+            const { error } = await _supabase.auth.signOut();
+            cekStatusSesiUser(); // Kunci kembali layar setelah user logout
+        }
+
+        // Pantau perubahan sesi login secara dinamis
+        _supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') cekStatusSesiUser();
+            if (event === 'SIGNED_OUT') cekStatusSesiUser();
+        });
+
+
+        // ================= DATABASE & GRAPHIC LOGIC =================
 
         async function alexAmbilData() {
             let { data, error } = await _supabase.from('aset_barang').select('*').order('id', { ascending: true });
@@ -308,26 +329,22 @@
             return data || [];
         }
 
-        // FUNGSI BARU: MENGHITUNG DATA & MEMPERBARUI GRAFIK SECARA OTOMATIS
         function perbaruiDashboardGrafik(dataAset) {
             const total = dataAset.length;
             const bagus = dataAset.filter(item => item.status === "Bagus").length;
             const ringan = dataAset.filter(item => item.status === "Rusak Ringan").length;
             const beratDanHilang = dataAset.filter(item => item.status === "Rusak Berat" || item.status === "Hilang").length;
 
-            // Injeksi angka ke card statistik atas
             document.getElementById('stat-total').innerText = total;
             document.getElementById('stat-bagus').innerText = bagus;
             document.getElementById('stat-ringan').innerText = ringan;
             document.getElementById('stat-berat').innerText = beratDanHilang;
 
-            // Logika menggambar grafik lingkaran menggunakan Chart.js
-            const ctx = document.getElementById('chartKondisiAset').getContext('2d');
+            const canvasElement = document.getElementById('chartKondisiAset');
+            if(!canvasElement) return;
+            const ctx = canvasElement.getContext('2d');
             
-            // Hancurkan grafik lama jika sudah ada (agar tidak tumpang tindih saat di-refresh)
-            if (varChartKondisiAset) {
-                varChartKondisiAset.destroy();
-            }
+            if (varChartKondisiAset) { varChartKondisiAset.destroy(); }
 
             varChartKondisiAset = new Chart(ctx, {
                 type: 'pie',
@@ -335,29 +352,21 @@
                     labels: ['Bagus', 'Rusak Ringan', 'Rusak Berat / Hilang'],
                     datasets: [{
                         data: [bagus, ringan, beratDanHilang],
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'], // Hijau, Amber, Rose
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
                         borderWidth: 2,
                         borderColor: '#ffffff'
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false // Sembunyikan legenda bawaan teks karena sudah diwakili oleh angka statistik kiri
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
         async function tampilkanTabel() {
             const databaseAset = await alexAmbilData();
             const tabel = document.getElementById('tabel-aset');
+            if(!tabel) return;
             tabel.innerHTML = '';
             
-            // Perbarui analitik grafik setiap kali data dipanggil
             perbaruiDashboardGrafik(databaseAset);
             
             databaseAset.forEach(aset => {
@@ -402,43 +411,24 @@
 
             if (fotoFile) {
                 const namaFileUnik = `${kodeBarang}-${Date.now()}.${fotoFile.name.split('.').pop()}`;
-                
-                const { data: uploadData, error: uploadError } = await _supabase
-                    .storage
-                    .from('foto_aset')
-                    .upload(namaFileUnik, fotoFile);
-
+                const { data: uploadData, error: uploadError } = await _supabase.storage.from('foto_aset').upload(namaFileUnik, fotoFile);
                 if (uploadError) {
                     alert("Gagal upload gambar: " + uploadError.message);
-                    btnSimpan.innerText = "Simpan & Kirim ke Cloud";
-                    btnSimpan.disabled = false;
-                    return;
+                    btnSimpan.innerText = "Simpan ke Cloud"; btnSimpan.disabled = false; return;
                 }
-
-                const { data: urlData } = _supabase
-                    .storage
-                    .from('foto_aset')
-                    .getPublicUrl(namaFileUnik);
-                
+                const { data: urlData } = _supabase.storage.from('foto_aset').getPublicUrl(namaFileUnik);
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            const { error } = await _supabase
-                .from('aset_barang')
-                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload, tahun: tahunBeli }]);
+            const { error } = await _supabase.from('aset_barang').insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", foto_url: urlFotoHasilUpload, tahun: tahunBeli }]);
 
-            if (error) {
-                alert("Gagal menyimpan data: " + error.message);
-            } else {
+            if (error) { alert("Gagal menyimpan data: " + error.message); } 
+            else {
                 lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload);
-                document.getElementById('nama').value = '';
-                document.getElementById('pemilik').value = '';
-                document.getElementById('foto-input').value = '';
+                document.getElementById('nama').value = ''; document.getElementById('pemilik').value = ''; document.getElementById('foto-input').value = '';
                 tampilkanTabel();
             }
-
-            btnSimpan.innerText = "Simpan & Kirim ke Cloud";
-            btnSimpan.disabled = false;
+            btnSimpan.innerText = "Simpan ke Cloud"; btnSimpan.disabled = false;
         }
 
         function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl) {
@@ -452,18 +442,15 @@
             const tempatFoto = document.getElementById('tempat-foto');
             const imgTampilan = document.getElementById('foto-tampilan');
             if (fotoUrl && fotoUrl !== "null" && fotoUrl !== "") {
-                imgTampilan.src = fotoUrl;
-                tempatFoto.classList.remove('hidden');
+                imgTampilan.src = fotoUrl; tempatFoto.classList.remove('hidden');
             } else {
                 tempatFoto.classList.add('hidden');
             }
 
             document.getElementById('tempat-qr').innerHTML = '';
             new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 120, height: 120 });
-            
             document.getElementById('stiker-nama').innerText = nama;
             document.getElementById('stiker-kode').innerText = kode;
-            
             document.getElementById('tempat-qr-stiker').innerHTML = '';
             new QRCode(document.getElementById('tempat-qr-stiker'), { text: kode, width: 80, height: 80 });
 
@@ -476,15 +463,12 @@
             if (!kodeAsetSedangDilihat) return alert("Pilih barang terlebih dahulu!");
             document.body.classList.add('mode-cetak-stiker-aktif');
             window.print();
-            setTimeout(() => {
-                document.body.classList.remove('mode-cetak-stiker-aktif');
-            }, 500);
+            setTimeout(() => { document.body.classList.remove('mode-cetak-stiker-aktif'); }, 500);
         }
 
         async function updateKondisiBarang() {
             const statusBaru = document.getElementById('ubah-status').value;
             const { error } = await _supabase.from('aset_barang').update({ status: statusBaru }).eq('kode', kodeAsetSedangDilihat);
-
             if (error) { alert("Gagal update status: " + error.message); } 
             else {
                 const databaseAset = await alexAmbilData();
@@ -505,7 +489,6 @@
             html5QrcodeScanner.clear();
             const databaseAset = await alexAmbilData();
             const barang = databaseAset.find(item => item.kode === decodedText);
-            
             if (barang) {
                 alert("Aset Terdeteksi Otomatis!");
                 lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url);
@@ -516,7 +499,8 @@
 
         function onScanError(err) {}
 
-        tampilkanTabel();
+        // Jalankan pemeriksaan otentikasi user saat halaman dimuat pertama kali
+        cekStatusSesiUser();
     </script>
 </body>
 </html>
