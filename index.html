@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Aset Kantor + Scanner QR</title>
+    <title>Sistem Aset Kantor Online - Supabase</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-100 font-sans p-4 md:p-6">
 
     <div class="max-w-4xl mx-auto space-y-6">
         
         <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-md">
-            <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor</h1>
-            <p class="text-sm opacity-90">Input Barang & Scan QR Code Instan</p>
+            <h1 class="text-2xl font-bold">Sistem Manajemen Aset Kantor (ONLINE)</h1>
+            <p class="text-sm opacity-90">Data Tersinkronisasi Antar Perangkat via Cloud</p>
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">
-                📷 Scan QR Aset
-            </h2>
-            <p class="text-sm text-gray-500 mb-4">Klik tombol di bawah untuk mengaktifkan kamera HP/Laptop dan arahkan ke stiker QR Code.</p>
-            
+            <h2 class="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">📷 Scan QR Aset</h2>
             <div class="flex flex-col items-center justify-center">
                 <button onclick="mulaiScanner()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-md hover:bg-emerald-700 font-medium cursor-pointer mb-4">
                     Buka Kamera Scanner
@@ -52,14 +50,14 @@
                         <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <button onclick="simpanAset()" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 font-medium cursor-pointer">
-                        Simpan & Buat QR
+                        Simpan & Kirim ke Cloud
                     </button>
                 </div>
             </div>
 
-            <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center transition-all duration-300">
+            <div id="box-detail" class="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
                 <h3 id="judul-detail" class="text-lg font-bold mb-2 text-gray-800">QR Code Terbuat</h3>
-                <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih/di-input</p>
+                <p id="info-kode" class="text-sm text-gray-500 mb-4">Belum ada barang dipilih</p>
                 <div id="tempat-qr" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
                 <div id="area-update-status" class="hidden w-full">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ubah Kondisi Barang:</label>
@@ -74,7 +72,7 @@
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md">
-            <h3 class="text-lg font-bold mb-4 text-gray-800">Daftar Semua Aset</h3>
+            <h3 class="text-lg font-bold mb-4 text-gray-800">Daftar Semua Aset Kantor (Live Cloud)</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -93,23 +91,41 @@
     </div>
 
     <script>
-        let databaseAset = JSON.parse(localStorage.getItem('databaseAset')) || [];
+        // MASUKKAN DETAIL ALAMAT SUPABASE KAMU DI SINI
+        const SUPABASE_URL = "https://jrpeyrcwqvlruvsmnasn.supabase.co/rest/v1/";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpycGV5cmN3cXZscnV2c21uYXNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTMzOTUsImV4cCI6MjA5NDc4OTM5NX0.as47qAMflFu7OqTk9zeoCyGobhVt3LtTUoyrsM9E1zg";
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let html5QrcodeScanner = null;
-        let kodeAsetSedangDilihat = ""; // Menyimpan kode barang yang sedang di-scan
+        let kodeAsetSedangDilihat = "";
 
-        function tampilkanTabel() {
+        // Fungsi Baru: Mengambil data langsung dari database online Supabase
+        async function ambilDataDariSupabase() {
+            let { data: aset_barang, error } = await _supabase
+                .from('aset_barang')
+                .select('*')
+                .order('id', { ascending: true });
+
+            if (error) {
+                console.error("Gagal ambil data:", error);
+                return [];
+            }
+            return aset_barang || [];
+        }
+
+        async function tampilkanTabel() {
+            const databaseAset = await ambilDataDariSupabase();
             const tabel = document.getElementById('tabel-aset');
             tabel.innerHTML = '';
             
             databaseAset.forEach(aset => {
-                // Beri warna berbeda tergantung status kondisi barang
                 let warnaStatus = "bg-green-100 text-green-800";
                 if(aset.status === "Rusak Ringan") warnaStatus = "bg-yellow-100 text-yellow-800";
                 if(aset.status === "Rusak Berat") warnaStatus = "bg-red-100 text-red-800";
                 if(aset.status === "Hilang") warnaStatus = "bg-gray-200 text-gray-800";
 
                 tabel.innerHTML += `
-                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAset('${aset.kode}')">
+                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}')">
                         <td class="p-3 border-b font-mono font-bold text-blue-600">${aset.kode}</td>
                         <td class="p-3 border-b font-medium">${aset.nama}</td>
                         <td class="p-3 border-b">${aset.pemilik}</td>
@@ -121,7 +137,7 @@
             });
         }
 
-        function simpanAset() {
+        async function simpanAset() {
             const nama = document.getElementById('nama').value;
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
@@ -129,96 +145,78 @@
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
+            const databaseAset = await ambilDataDariSupabase();
             const jumlahKategoriSama = databaseAset.filter(item => item.kode.includes(kategori)).length;
             const nomorUrut = String(jumlahKategoriSama + 1).padStart(3, '0');
             const kodeBarang = `AST-${kategori}-${tahun}-${nomorUrut}`;
 
-            const dataBaru = { kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus" };
-            databaseAset.push(dataBaru);
-            localStorage.setItem('databaseAset', JSON.stringify(databaseAset));
+            // MEMASUKKAN DATA KE SUPABASE CLOUD (BARU)
+            const { error } = await _supabase
+                .from('aset_barang')
+                .insert([{ kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus" }]);
 
-            // Tampilkan QR hasil inputan baru
-            lihatDetailAset(kodeBarang);
-            
-            document.getElementById('nama').value = '';
-            document.getElementById('pemilik').value = '';
-            tampilkanTabel();
-        }
-
-        // FUNGSI BARU: Menampilkan detail barang ke kotak sebelah kanan (Bisa dipicu dari klik tabel atau hasil SCAN)
-        function lihatDetailAset(kode) {
-            kodeAsetSedangDilihat = kode;
-            const barang = databaseAset.find(item => item.kode === kode);
-
-            if (barang) {
-                document.getElementById('judul-detail').innerText = barang.nama;
-                document.getElementById('info-kode').innerHTML = `
-                    <b class="text-blue-600">${barang.kode}</b><br>
-                    Penanggung Jawab: ${barang.pemilik}<br>
-                    Status Saat Ini: <span class="font-bold">${barang.status}</span>
-                `;
-                
-                // Regenerate QR untuk dicetak kembali jika perlu
-                document.getElementById('tempat-qr').innerHTML = '';
-                new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 130, height: 130 });
-
-                // Munculkan opsi ubah status kondisi barang
-                document.getElementById('area-update-status').classList.remove('hidden');
-                document.getElementById('ubah-status').value = barang.status;
-                
-                // Beri efek highlight warna biru pada kotak detail agar user tahu data berhasil ditemukan
-                const box = document.getElementById('box-detail');
-                box.classList.add('bg-blue-50');
-                setTimeout(() => box.classList.remove('bg-blue-50'), 500);
-            }
-        }
-
-        // FUNGSI BARU: Mengubah kondisi barang (Bagus/Rusak/Hilang) langsung tersimpan ke database
-        function updateKondisiBarang() {
-            const statusBaru = document.getElementById('ubah-status').value;
-            const index = databaseAset.findIndex(item => item.kode === kodeAsetSedangDilihat);
-            
-            if (index !== -1) {
-                databaseAset[index].status = statusBaru;
-                localStorage.setItem('databaseAset', JSON.stringify(databaseAset));
+            if (error) {
+                alert("Gagal menyimpan ke Cloud: " + error.message);
+            } else {
+                lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus");
+                document.getElementById('nama').value = '';
+                document.getElementById('pemilik').value = '';
                 tampilkanTabel();
-                lihatDetailAset(kodeAsetSedangDilihat); // Refresh info detail
-                alert(`Status aset ${kodeAsetSedangDilihat} berhasil diubah menjadi: ${statusBaru}`);
             }
         }
 
-        // FUNGSI BARU: Menyalakan Scanner Kamera
-        function mulaiScanner() {
-            // Jika scanner sudah aktif, matikan dulu mencegah error kamera tabrakan
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.clear();
-            }
-
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        function lihatDetailAsetLokal(kode, nama, pemilik, status) {
+            kodeAsetSedangDilihat = kode;
+            document.getElementById('judul-detail').innerText = nama;
+            document.getElementById('info-kode').innerHTML = `
+                <b class="text-blue-600">${kode}</b><br>
+                Penanggung Jawab: ${pemilik}<br>
+                Status Saat Ini: <span class="font-bold">${status}</span>
+            `;
             
-            // Jalankan scanner kamera
+            document.getElementById('tempat-qr').innerHTML = '';
+            new QRCode(document.getElementById('tempat-qr'), { text: kode, width: 130, height: 130 });
+            document.getElementById('area-update-status').classList.remove('hidden');
+            document.getElementById('ubah-status').value = status;
+        }
+
+        // FUNGSI BARU: Mengubah status di database Supabase Cloud
+        async function updateKondisiBarang() {
+            const statusBaru = document.getElementById('ubah-status').value;
+            
+            const { error } = await _supabase
+                .from('aset_barang')
+                .update({ status: statusBaru })
+                .eq('kode', kodeAsetSedangDilihat);
+
+            if (error) {
+                alert("Gagal update status di cloud: " + error.message);
+            } else {
+                tampilkanTabel();
+                alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui di Cloud!`);
+            }
+        }
+
+        function mulaiScanner() {
+            if (html5QrcodeScanner) { html5QrcodeScanner.clear(); }
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
             html5QrcodeScanner.render(onScanSuccess, onScanError);
         }
 
-        // Aksi ketika kamera berhasil membaca teks kode QR
-        function onScanSuccess(decodedText, decodedResult) {
-            // Hentikan kamera setelah sukses scan agar menghemat baterai HP
+        async function onScanSuccess(decodedText, decodedResult) {
             html5QrcodeScanner.clear();
+            const databaseAset = await ambilDataDariSupabase();
+            const barang = databaseAset.find(item => item.kode === decodedText);
             
-            // Cek apakah kode barang hasil scan ada di database kita
-            const cocok = databaseAset.some(item => item.kode === decodedText);
-            
-            if (cocok) {
-                alert(`Aset Ditemukan! Kode: ${decodedText}`);
-                lihatDetailAset(decodedText); // Tampilkan detail dan form update statusnya
+            if (barang) {
+                alert(`Aset Terdeteksi Otomatis!`);
+                lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status);
             } else {
-                alert(`QR Code terbaca: "${decodedText}", namun kode ini tidak terdaftar di database aset kantor.`);
+                alert(`Kode QR "${decodedText}" tidak ada di database Cloud.`);
             }
         }
 
-        function onScanError(err) {
-            // Kita abaikan log error scanning realtime agar konsol tidak penuh
-        }
+        function onScanError(err) {}
 
         tampilkanTabel();
     </script>
