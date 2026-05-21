@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* ================= MANAGEMENT PRINT CSS SYSTEM ================= */
@@ -49,7 +50,7 @@
                     <input type="password" id="login-password" placeholder="••••••••" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
                 <button onclick="prosesLogin()" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer text-center">
-                    Masuk ke Sistem
+                    Login
                 </button>
             </div>
         </div>
@@ -152,7 +153,7 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Lokasi Penempatan Ruangan</label>
                         <select id="lokasi-ruangan" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                             <option value="Ruang Kaban">🏢 Ruang Kepala Badan</option>
-                            <option value="Ruang Sekretariat">💼 Ruang Sekretariat</option>
+                            <option value="Ruang Secretariat">💼 Ruang Sekretariat</option>
                             <option value="Ruang Pusdatin">🖥️ Ruang Pusdatin / IT</option>
                             <option value="Ruang Rapat Utama">📢 Ruang Rapat Utama</option>
                             <option value="Aula Serbaguna">🏛️ Aula Serbaguna</option>
@@ -232,13 +233,16 @@
                     <p class="text-xs text-slate-400 mt-0.5">Seluruh daftar barang yang tercatat secara real-time</p>
                 </div>
                 
-                <div class="flex items-center gap-3 flex-1 max-w-md md:justify-end">
+                <div class="flex items-center gap-3 flex-1 max-w-xl md:justify-end">
                     <div class="relative w-full">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
                         <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang, ruangan, kode, atau pemilik..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                     <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
                         🖨️ Cetak
+                    </button>
+                    <button onclick="eksporKeExcelPremium()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-emerald-600/10 shrink-0">
+                        📊 Ekspor Excel
                     </button>
                 </div>
             </div>
@@ -331,11 +335,10 @@
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') cekStatusSesiUser();
         });
 
-        // ================= FUNGSI BARU: LOGIKA PENCARIAN PINTAR (REAL-TIME FILTER) =================
+        // ================= LOGIKA PENCARIAN PINTAR (REAL-TIME FILTER) =================
         function filterPencarianTabelAset() {
             const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
             
-            // Saring data dari memori lokal tanpa membebani kuota request ke cloud Supabase berkali-kali
             const hasilSaring = memoriLokalDataAset.filter(item => {
                 const nama = (item.nama || "").toLowerCase();
                 const kode = (item.kode || "").toLowerCase();
@@ -345,7 +348,6 @@
                 return nama.includes(kataKunci) || kode.includes(kataKunci) || ruangan.includes(kataKunci) || pemilik.includes(kataKunci);
             });
 
-            // Gambar ulang isi baris tabel berdasarkan hasil pencarian
             renderBarisTabelSecaraFisik(hasilSaring);
         }
 
@@ -389,17 +391,11 @@
         }
 
         async function tampilkanTabel() {
-            // Ambil data segar dari cloud, lalu amankan di memori lokal javascript
             memoriLokalDataAset = await alexAmbilData();
-            
-            // Perbarui visualisasi chart lingkaran
             perbaruiDashboardGrafik(memoriLokalDataAset);
-            
-            // Render baris tabel data ke layar
             renderBarisTabelSecaraFisik(memoriLokalDataAset);
         }
 
-        // Fungsi khusus memetakan array data menjadi baris tabel HTML
         function renderBarisTabelSecaraFisik(arrayData) {
             const tabel = document.getElementById('tabel-aset');
             if(!tabel) return;
@@ -431,7 +427,7 @@
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
             const tahunBeli = document.getElementById('tahun-beli').value;
-            const ruanganDipilih = document.getElementById('lokasi-ruangan').value; // Ambil nilai ruangan baru
+            const ruanganDipilih = document.getElementById('lokasi-ruangan').value;
             const fotoFile = document.getElementById('foto-input').files[0];
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
@@ -457,7 +453,6 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            // MASUKKAN VARIABEL RUANGAN KE KOLOM 'ruangan' DI SUPABASE (BARU)
             const { error } = await _supabase.from('aset_barang').insert([{ 
                 kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", 
                 foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih 
@@ -536,6 +531,45 @@
         }
 
         function onScanError(err) {}
+
+        // ================= FUNGSI BARU: EKSPOR EXCEL (.XLSX) PREMIUM =================
+        function eksporKeExcelPremium() {
+            if (memoriLokalDataAset.length === 0) {
+                return alert("Tidak ada data aset untuk diekspor!");
+            }
+
+            // 1. Petakan kolom agar nama kolom di file Excel rapi & profesional
+            const dataRapi = memoriLokalDataAset.map((aset, index) => ({
+                "No": index + 1,
+                "Kode Registrasi": aset.kode,
+                "Nama Spesifikasi Aset": aset.nama,
+                "Tahun Anggaran": aset.tahun || '-',
+                "Lokasi Ruangan": aset.ruangan || '-',
+                "Unit Penanggung Jawab": aset.pemilik,
+                "Status Kondisi": aset.status
+            }));
+
+            // 2. Proses transformasi data ke format SheetJS
+            const worksheet = XLSX.utils.json_to_sheet(dataRapi);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data Aset BAPPEDA");
+
+            // 3. Set lebar kolom otomatis (dalam satuan karakter) agar tidak terpotong
+            const aturLebarKolom = [
+                { wch: 5 },  // No
+                { wch: 22 }, // Kode Registrasi
+                { wch: 35 }, // Nama Spesifikasi Aset
+                { wch: 15 }, // Tahun Anggaran
+                { wch: 25 }, // Lokasi Ruangan
+                { wch: 25 }, // Unit Penanggung Jawab
+                { wch: 15 }  // Status Kondisi
+            ];
+            worksheet['!cols'] = aturLebarKolom;
+
+            // 4. Unduh file langsung berformat .xlsx dengan stempel tanggal hari ini
+            const tanggalHariIni = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(workbook, `SIMAK_BAPPEDA_EXPORT_${tanggalHariIni}.xlsx`);
+        }
 
         cekStatusSesiUser();
     </script>
