@@ -22,7 +22,7 @@
             table { width: 100% !important; border: 1px solid #000 !important; border-collapse: collapse !important; margin-top: 20px !important; }
             th, td { border: 1px solid #000 !important; color: #000 !important; font-size: 10pt !important; padding: 10px 8px !important; }
 
-            /* SITUASI B: PRINT STIKER THERMAL */
+            /* SITUASI B: PRINT STIKER */
             body.mode-cetak-stiker-aktif { padding: 0 !important; margin: 0 !important; }
             body.mode-cetak-stiker-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
             body.mode-cetak-stiker-aktif .non-cetak, body.mode-cetak-stiker-aktif .kop-surat-dinas, body.mode-cetak-stiker-aktif .lembar-pengesahan, body.mode-cetak-stiker-aktif table, body.mode-cetak-stiker-aktif #reader, body.mode-cetak-stiker-aktif .grid, body.mode-cetak-stiker-aktif #box-detail, body.mode-cetak-stiker-aktif #area-grafis-analitik, body.mode-cetak-stiker-aktif #form-login-container { display: none !important; }
@@ -69,7 +69,6 @@
                 <span class="bg-white/10 text-white border border-white/20 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Manajemen Internal</span>
                 <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1.5">SIMAK DIGITAL</h1>
                 <p class="text-xs text-blue-100/80 mt-1 font-medium">Data Terintegrasi Cloud & Validasi Kode QR Real-Time</p>
-                <p id="label-peran-user" class="text-[11px] text-yellow-300 mt-1 font-bold uppercase tracking-wider"></p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm text-xs font-semibold">
@@ -97,26 +96,26 @@
                     <p id="stat-ringan" class="text-3xl font-black text-amber-700 mt-1">0</p>
                 </div>
                 <div class="bg-rose-50/60 p-4 rounded-2xl border border-rose-100 shadow-sm flex flex-col justify-center">
-                    <p class="text-xs font-bold text-rose-600 uppercase tracking-wider">Rusak/Hilang</p>
+                    <p class="text-xs font-bold text-rose-600 uppercase tracking-wider">Rusak Berat / Hilang</p>
                     <p id="stat-berat" class="text-3xl font-black text-rose-700 mt-1">0</p>
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden">
-                <div class="text-center sm:text-left shrink-0">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2 flex flex-col sm:flex-row items-center justify-around gap-4">
+                <div class="text-center sm:text-left">
                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 justify-center sm:justify-start">
                         <span class="w-1.5 h-4 rounded bg-indigo-600 block"></span> Persentase Kondisi Fisik
                     </h3>
                     <p class="text-xs text-slate-400 mt-1">Visualisasi status real-time aset BAPPEDA</p>
                 </div>
-                <div class="w-full max-w-[140px] h-[140px] mx-auto sm:mx-0 relative flex items-center justify-center">
-                    <canvas id="chartKondisiAset" style="max-width:140px !important; max-height:140px !important;"></canvas>
+                <div class="w-36 h-36 relative">
+                    <canvas id="chartKondisiAset"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 non-cetak">
-            <div id="kolom-form-input-admin" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
                 <div class="border-b border-slate-100 pb-3">
                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-1.5 h-4 rounded bg-blue-600 block"></span> Registrasi Aset Baru
@@ -187,7 +186,6 @@
                         <img id="foto-tampilan" src="" alt="Foto Aset" class="w-32 h-32 object-cover rounded-2xl shadow-md border border-slate-200">
                     </div>
                     <div id="tempat-qr" class="p-3 bg-slate-50 border border-slate-100 rounded-2xl mb-4"></div>
-                    
                     <div id="area-update-status" class="hidden w-full border-t border-slate-100 pt-3">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ubah Status Kondisi</label>
                         <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-blue-200 rounded-xl bg-blue-50 text-blue-900 font-bold focus:outline-none cursor-pointer">
@@ -200,7 +198,7 @@
                 </div>
             </div>
 
-            <div id="kolom-scanner-kamera-all" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col justify-between lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col justify-between lg:col-span-1">
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3 mb-3 uppercase tracking-wider">
                         <span class="w-1.5 h-4 rounded bg-emerald-600 block"></span> Pemindai QR Lapangan
@@ -237,7 +235,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
                         <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang, ruangan, kode, atau pemilik..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
-                    <button id="btn-print-laporan-utama" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
                         🖨️ Cetak
                     </button>
                 </div>
@@ -289,45 +287,18 @@
         let html5QrcodeScanner = null;
         let kodeAsetSedangDilihat = "";
         let varChartKondisiAset = null;
-        let memoriLokalDataAset = [];
-        let peranGlobalUser = "user";
+        let memoriLokalDataAset = []; // Menyimpan salinan data dari cloud untuk fitur pencarian instan
 
-        // ================= SISTEM AUTHENTICATION WITH ROLE-BASED ACCESS CONTROL =================
+        // ================= SISTEM AUTHENTICATION SECURITY =================
         async function cekStatusSesiUser() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
-                const metadataUser = session.user.user_metadata;
-                peranGlobalUser = metadataUser && metadataUser.role ? metadataUser.role : "user";
-
                 document.getElementById('form-login-container').classList.add('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
-
-                terapkanAturanHakAksesPeran(peranGlobalUser);
                 tampilkanTabel();
             } else {
                 document.getElementById('form-login-container').classList.remove('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.add('hidden');
-            }
-        }
-
-        function terapkanAturanHakAksesPeran(role) {
-            const labelPeran = document.getElementById('label-peran-user');
-            const kolomFormInput = document.getElementById('kolom-form-input-admin');
-            const tombolCetakLaporan = document.getElementById('btn-print-laporan-utama');
-
-            if (role === "admin") {
-                labelPeran.innerText = "Peran: 🛠️ Admin / Pengurus Barang";
-                kolomFormInput.classList.remove('hidden');
-                document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-3').classList.replace('lg:grid-cols-2', 'lg:grid-cols-3');
-                tombolCetakLaporan.classList.remove('hidden');
-            } else {
-                labelPeran.innerText = "Peran: 👁️ Pegawai Umum (Lihat Saja)";
-                kolomFormInput.classList.add('hidden');
-                const workspaceGrid = document.querySelector('.grid.non-cetak');
-                if (workspaceGrid) {
-                    workspaceGrid.classList.replace('lg:grid-cols-3', 'lg:grid-cols-2');
-                }
-                tombolCetakLaporan.classList.add('hidden');
             }
         }
 
@@ -351,7 +322,6 @@
 
         async function prosesLogout() {
             await _supabase.auth.signOut();
-            peranGlobalUser = "user";
             cekStatusSesiUser();
         }
 
@@ -359,16 +329,21 @@
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') cekStatusSesiUser();
         });
 
-        // ================= LOGIKA PENCARIAN PINTAR =================
+        // ================= FUNGSI BARU: LOGIKA PENCARIAN PINTAR (REAL-TIME FILTER) =================
         function filterPencarianTabelAset() {
             const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
+            
+            // Saring data dari memori lokal tanpa membebani kuota request ke cloud Supabase berkali-kali
             const hasilSaring = memoriLokalDataAset.filter(item => {
                 const nama = (item.nama || "").toLowerCase();
                 const kode = (item.kode || "").toLowerCase();
                 const ruangan = (item.ruangan || "").toLowerCase();
                 const pemilik = (item.pemilik || "").toLowerCase();
+                
                 return nama.includes(kataKunci) || kode.includes(kataKunci) || ruangan.includes(kataKunci) || pemilik.includes(kataKunci);
             });
+
+            // Gambar ulang isi baris tabel berdasarkan hasil pencarian
             renderBarisTabelSecaraFisik(hasilSaring);
         }
 
@@ -407,21 +382,22 @@
                         borderColor: '#ffffff'
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    animation: { duration: 500 }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
         async function tampilkanTabel() {
+            // Ambil data segar dari cloud, lalu amankan di memori lokal javascript
             memoriLokalDataAset = await alexAmbilData();
+            
+            // Perbarui visualisasi chart lingkaran
             perbaruiDashboardGrafik(memoriLokalDataAset);
+            
+            // Render baris tabel data ke layar
             renderBarisTabelSecaraFisik(memoriLokalDataAset);
         }
 
+        // Fungsi khusus memetakan array data menjadi baris tabel HTML
         function renderBarisTabelSecaraFisik(arrayData) {
             const tabel = document.getElementById('tabel-aset');
             if(!tabel) return;
@@ -449,13 +425,11 @@
         }
 
         async function simpanAset() {
-            if (peranGlobalUser !== "admin") return alert("Akses Ditolak! Anda bukan Admin.");
-
             const nama = document.getElementById('nama').value;
             const kategori = document.getElementById('kategori').value;
             const pemilik = document.getElementById('pemilik').value;
             const tahunBeli = document.getElementById('tahun-beli').value;
-            const ruanganDipilih = document.getElementById('lokasi-ruangan').value;
+            const ruanganDipilih = document.getElementById('lokasi-ruangan').value; // Ambil nilai ruangan baru
             const fotoFile = document.getElementById('foto-input').files[0];
 
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
@@ -481,12 +455,13 @@
                 urlFotoHasilUpload = urlData.publicUrl;
             }
 
-            const { error } = await _supabase.from('aset_barang').insert([{
-                kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus",
-                foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih
+            // MASUKKAN VARIABEL RUANGAN KE KOLOM 'ruangan' DI SUPABASE (BARU)
+            const { error } = await _supabase.from('aset_barang').insert([{ 
+                kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", 
+                foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih 
             }]);
 
-            if (error) { alert("Gagal menyimpan data: " + error.message); }
+            if (error) { alert("Gagal menyimpan data: " + error.message); } 
             else {
                 lihatDetailAsetLokal(kodeBarang, nama, pemilik, "Bagus", urlFotoHasilUpload, ruanganDipilih);
                 document.getElementById('nama').value = ''; document.getElementById('pemilik').value = ''; document.getElementById('foto-input').value = '';
@@ -518,21 +493,12 @@
             document.getElementById('tempat-qr-stiker').innerHTML = '';
             new QRCode(document.getElementById('tempat-qr-stiker'), { text: kode, width: 80, height: 80 });
 
-            const tombolCetakStiker = document.getElementById('btn-print-stiker');
-            const dropdownUbahStatus = document.getElementById('area-update-status');
-
-            if (peranGlobalUser === "admin") {
-                tombolCetakStiker.classList.remove('hidden');
-                dropdownUbahStatus.classList.remove('hidden');
-                document.getElementById('ubah-status').value = status;
-            } else {
-                tombolCetakStiker.classList.add('hidden');
-                dropdownUbahStatus.classList.add('hidden');
-            }
+            document.getElementById('btn-print-stiker').classList.remove('hidden');
+            document.getElementById('area-update-status').classList.remove('hidden');
+            document.getElementById('ubah-status').value = status;
         }
 
         function cetakStikerQR() {
-            if (peranGlobalUser !== "admin") return alert("Akses Ditolak!");
             if (!kodeAsetSedangDilihat) return alert("Pilih barang terlebih dahulu!");
             document.body.classList.add('mode-cetak-stiker-aktif');
             window.print();
@@ -540,11 +506,9 @@
         }
 
         async function updateKondisiBarang() {
-            if (peranGlobalUser !== "admin") return alert("Akses ditolak!");
-            
             const statusBaru = document.getElementById('ubah-status').value;
             const { error } = await _supabase.from('aset_barang').update({ status: statusBaru }).eq('kode', kodeAsetSedangDilihat);
-            if (error) { alert("Gagal update status: " + error.message); }
+            if (error) { alert("Gagal update status: " + error.message); } 
             else {
                 tampilkanTabel();
                 alert(`Status aset ${kodeAsetSedangDilihat} berhasil diperbarui!`);
