@@ -17,7 +17,7 @@
 
         @media print {
             body { background-color: white !important; padding: 0 !important; color: #000 !important; }
-            .max-w-5xl { max-width: 100% !important; box-shadow: none !important; padding: 0 !important; }
+            .max-w-6xl { max-width: 100% !important; box-shadow: none !important; padding: 0 !important; }
             .non-cetak, #reader, button, input, select, #box-detail, #area-grafis-analitik, #form-login-container { display: none !important; }
             .kop-surat-dinas, .lembar-pengesahan { display: block !important; }
             table { width: 100% !important; border: 1px solid #000 !important; border-collapse: collapse !important; margin-top: 20px !important; }
@@ -25,49 +25,69 @@
 
             /* SITUASI B: PRINT STIKER TUNGGAL */
             body.mode-cetak-stiker-aktif { padding: 0 !important; margin: 0 !important; }
-            body.mode-cetak-stiker-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            body.mode-cetak-stiker-aktif .max-w-6xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
             body.mode-cetak-stiker-aktif .non-cetak, body.mode-cetak-stiker-aktif .kop-surat-dinas, body.mode-cetak-stiker-aktif .lembar-pengesahan, body.mode-cetak-stiker-aktif table, body.mode-cetak-stiker-aktif #reader, body.mode-cetak-stiker-aktif .grid, body.mode-cetak-stiker-aktif #box-detail, body.mode-cetak-stiker-aktif #area-grafis-analitik, body.mode-cetak-stiker-aktif #form-login-container { display: none !important; }
             body.mode-cetak-stiker-aktif #area-stiker-print { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; width: 45mm !important; height: 45mm !important; padding: 2mm !important; margin: 0 auto !important; border: 1px solid #000 !important; box-sizing: border-box !important; page-break-inside: avoid !important; }
 
-            /* SITUASI C: PRINT STIKER MASAL (BANYAK SEKALIGUS) */
+            /* SITUASI C: PRINT STIKER MASAL */
             body.mode-cetak-stiker-masal-aktif { padding: 0 !important; margin: 0 !important; background: white !important; }
-            body.mode-cetak-stiker-masal-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            body.mode-cetak-stiker-masal-aktif .max-w-6xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
             body.mode-cetak-stiker-masal-aktif .non-cetak, body.mode-cetak-stiker-masal-aktif .kop-surat-dinas, body.mode-cetak-stiker-masal-aktif .lembar-pengesahan, body.mode-cetak-stiker-masal-aktif table, body.mode-cetak-stiker-masal-aktif #reader, body.mode-cetak-stiker-masal-aktif .grid, body.mode-cetak-stiker-masal-aktif #box-detail, body.mode-cetak-stiker-masal-aktif #area-grafis-analitik, body.mode-cetak-stiker-masal-aktif #form-login-container, body.mode-cetak-stiker-masal-aktif #area-stiker-print { display: none !important; }
             body.mode-cetak-stiker-masal-aktif #area-stiker-masal-print { 
                 display: grid !important; 
-                grid-template-columns: repeat(3, 1fr) !important; /* Membentuk baris 3 kolom stiker */
+                grid-template-columns: repeat(3, 1fr) !important;
                 gap: 6mm !important; 
                 padding: 5mm !important; 
             }
         }
+
+        /* ANIMASI LASER SCANNER */
+        .scanner-container { position: relative; }
+        .laser-line {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #10b981, transparent);
+            box-shadow: 0 0 8px #10b981;
+            z-index: 10;
+            animation: scanAnimation 2s linear infinite;
+        }
+        @keyframes scanAnimation {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+        .scanner-aktif .laser-line { display: block; }
     </style>
 </head>
-<body class="bg-[#f8fafc] font-sans antialiased p-4 md:p-8 text-slate-800">
+<body class="bg-[#f1f5f9] font-sans antialiased p-3 md:p-6 text-slate-800 transition-colors duration-300">
 
-    <div id="form-login-container" class="fixed inset-0 bg-slate-100 flex items-center justify-center p-4 z-50">
-        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full space-y-5">
+    <div id="form-login-container" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="bg-white/95 p-6 md:p-8 rounded-3xl shadow-2xl border border-white/20 max-w-sm w-full space-y-6 backdrop-blur-xl transform transition-all duration-300">
             <div class="text-center">
-                <span class="bg-blue-50 text-blue-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Keamanan</span>
-                <h2 class="text-xl font-black text-slate-900 mt-2">SIMAK</h2>
-                <p class="text-xs text-slate-400 mt-1">Silakan masuk menggunakan akun dinas yang terdaftar</p>
+                <span class="bg-blue-50 text-blue-600 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-blue-100">Sistem Autentikasi</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-3 tracking-tight">SIMAK BAPPEDA</h2>
+                <p class="text-xs text-slate-400 mt-1.5">Silakan masuk untuk mengelola manajemen aset</p>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Username</label>
-                    <input type="email" id="login-email" placeholder="nama@naganrayakab.go.id" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Dinas</label>
+                    <input type="email" id="login-email" placeholder="nama@naganrayakab.go.id" class="mt-1.5 block w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 focus:bg-white transition-all duration-200">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
-                    <input type="password" id="login-password" placeholder="••••••••" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" class="mt-1.5 block w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 focus:bg-white transition-all duration-200">
                 </div>
-                <button onclick="prosesLogin()" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer text-center">
+                <button onclick="prosesLogin()" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 transition-all cursor-pointer text-center active:scale-[0.99]">
                     Masuk ke Sistem
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="konten-aplikasi-utama" class="hidden max-w-5xl mx-auto space-y-6">
+    <div id="konten-aplikasi-utama" class="hidden max-w-6xl mx-auto space-y-6">
         
         <div class="kop-surat-dinas text-center border-b-4 border-double border-black pb-3 mb-6">
             <h1 class="text-xl font-bold uppercase tracking-wide text-black">Pemerintah Kabupaten Nagan Raya</h1>
@@ -76,21 +96,22 @@
             <h3 class="text-md font-bold uppercase mt-6 tracking-wide underline text-center text-black">Laporan Rekapitulasi Inventarisasi Aset Kantor</h3>
         </div>
 
-        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 md:p-8 rounded-2xl shadow-xl shadow-blue-900/10 flex flex-col md:flex-row justify-between items-center gap-4 non-cetak border-b border-white/10">
-            <div class="text-center md:text-left">
-                <span class="bg-white/10 text-white border border-white/20 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">Sistem Manajemen Internal</span>
-                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1.5">SIMAK</h1>
-                <p class="text-xs text-blue-100/80 mt-1 font-medium">Data Terintegrasi Cloud & Validasi Kode QR Real-Time</p>
+        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 md:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-4 non-cetak border border-slate-800 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="text-center md:text-left z-10">
+                <span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] uppercase font-extrabold tracking-widest px-3 py-1 rounded-full backdrop-blur-sm">Aset Management Real-Time</span>
+                <h1 class="text-3xl font-black tracking-tight mt-2 bg-gradient-to-r from-white via-slate-100 to-blue-200 bg-clip-text text-transparent">SIMAK</h1>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Badan Perencanaan Pembangunan Daerah Kabupaten Nagan Raya</p>
             </div>
-            <div class="flex items-center gap-3">
-                <div id="badge-hak-akses" class="text-xs font-bold px-3 py-2 rounded-xl text-white border backdrop-blur-sm">
+            <div class="flex items-center gap-3 z-10 flex-wrap justify-center">
+                <div id="badge-hak-akses" class="text-xs font-bold px-3 py-2 rounded-xl text-white border border-white/10 backdrop-blur-md bg-white/5">
                     Memuat Hak Akses...
                 </div>
-                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm text-xs font-semibold">
+                <div class="flex items-center gap-2 bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/20 backdrop-blur-md text-xs text-emerald-400 font-bold">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Online</span>
+                    <span>Sistem Aktif</span>
                 </div>
-                <button id="btn-logout-sistem" onclick="prosesLogout()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-xl border border-rose-500 transition-all cursor-pointer">
+                <button id="btn-logout-sistem" onclick="prosesLogout()" class="bg-rose-600/10 hover:bg-rose-600 hover:text-white text-rose-400 text-xs font-bold px-3 py-2 rounded-xl border border-rose-500/20 transition-all cursor-pointer active:scale-[0.97]">
                     Keluar 🚪
                 </button>
             </div>
@@ -98,30 +119,54 @@
 
         <div id="area-grafis-analitik" class="grid grid-cols-1 md:grid-cols-3 gap-6 non-cetak">
             <div class="md:col-span-1 grid grid-cols-2 gap-4">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Perangkat</p>
-                    <p id="stat-total" class="text-3xl font-black text-slate-900 mt-1">0</p>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Perangkat</p>
+                            <span class="text-sm">📦</span>
+                        </div>
+                        <p id="stat-total" class="text-3xl font-black text-slate-900 mt-1">0</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-1.5">Item Terdaftar</p>
                 </div>
-                <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-center">
-                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Kondisi Bagus</p>
-                    <p id="stat-bagus" class="text-3xl font-black text-emerald-700 mt-1">0</p>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Kondisi Bagus</p>
+                            <span class="text-sm">✅</span>
+                        </div>
+                        <p id="stat-bagus" class="text-3xl font-black text-emerald-600 mt-1">0</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-1.5">Siap Digunakan</p>
                 </div>
-                <div class="bg-amber-50/60 p-4 rounded-2xl border border-amber-100 shadow-sm flex flex-col justify-center">
-                    <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">Rusak Ringan</p>
-                    <p id="stat-ringan" class="text-3xl font-black text-amber-700 mt-1">0</p>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Rusak Ringan</p>
+                            <span class="text-sm">⚠️</span>
+                        </div>
+                        <p id="stat-ringan" class="text-3xl font-black text-amber-600 mt-1">0</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-1.5">Butuh Perbaikan</p>
                 </div>
-                <div class="bg-rose-50/60 p-4 rounded-2xl border border-rose-100 shadow-sm flex flex-col justify-center">
-                    <p class="text-xs font-bold text-rose-600 uppercase tracking-wider">Rusak Berat / Hilang</p>
-                    <p id="stat-berat" class="text-3xl font-black text-rose-700 mt-1">0</p>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Rusak Berat/Hilang</p>
+                            <span class="text-sm">🚨</span>
+                        </div>
+                        <p id="stat-berat" class="text-3xl font-black text-rose-600 mt-1">0</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-1.5">Afkir / Hilang</p>
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2 flex flex-col sm:flex-row items-center justify-around gap-4">
-                <div class="text-center sm:text-left">
-                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 justify-center sm:justify-start">
-                        <span class="w-1.5 h-4 rounded bg-indigo-600 block"></span> Persentase Kondisi Fisik
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2 flex flex-col sm:flex-row items-center justify-around gap-6 hover:shadow-md transition-all duration-200">
+                <div class="text-center sm:text-left space-y-1">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 justify-center sm:justify-start">
+                        <span class="w-1.5 h-4 rounded-full bg-indigo-600 block"></span> Komposisi Kondisi Aset
                     </h3>
-                    <p class="text-xs text-slate-400 mt-1">Visualisasi status real-time aset BAPPEDA</p>
+                    <p class="text-xs text-slate-400">Diagram persentase kondisi fisik aset BAPPEDA secara komprehensif.</p>
                 </div>
                 <div class="w-36 h-36 relative">
                     <canvas id="chartKondisiAset"></canvas>
@@ -130,31 +175,32 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 non-cetak">
-            <div id="block-registrasi" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
-                <div class="border-b border-slate-100 pb-3">
-                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                        <span class="w-1.5 h-4 rounded bg-blue-600 block"></span> Registrasi Aset Baru
+            
+            <div id="block-registrasi" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
+                <div class="border-b border-slate-100 pb-2.5">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded-full bg-blue-600 block"></span> Registrasi Barang Baru
                     </h3>
                 </div>
-                <div class="space-y-3.5">
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Spesifikasi Aset</label>
-                        <input type="text" id="nama" placeholder="Contoh: Laptop ASUS Wing" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Spesifikasi Aset</label>
+                        <input type="text" id="nama" placeholder="Contoh: Laptop ASUS ExpertBook" class="mt-1 block w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</label>
-                            <select id="kategori" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                                <option value="KOMP">Komputer</option>
-                                <option value="PRNT">Printer</option>
-                                <option value="MEUB">Furnitur</option>
-                                <option value="KEND">Kendaraan</option>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kategori</label>
+                            <select id="kategori" class="mt-1 block w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                                <option value="KOMP">Komputer / PC</option>
+                                <option value="PRNT">Printer / Scanner</option>
+                                <option value="MEUB">Furnitur / Meubel</option>
+                                <option value="KEND">Kendaraan Dinas</option>
                                 <option value="ELKT">Elektronik</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Tahun Anggaran</label>
-                            <select id="tahun-beli" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tahun Anggaran</label>
+                            <select id="tahun-beli" class="mt-1 block w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                                 <option value="2026">2026</option>
                                 <option value="2025">2025</option>
                                 <option value="2024">2024</option>
@@ -164,8 +210,8 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Lokasi Penempatan Ruangan</label>
-                        <select id="lokasi-ruangan" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lokasi Penempatan Ruangan</label>
+                        <select id="lokasi-ruangan" class="mt-1 block w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                             <option value="Ruang Kaban">Ruang Kepala Badan</option>
                             <option value="Ruang Secretariat">Ruang Sekretariat</option>
                             <option value="Ruang Pusdatin">Ruang Pusdatin / IT</option>
@@ -179,38 +225,38 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Penanggung Jawab / Pemilik</label>
-                        <input type="text" id="pemilik" placeholder="Contoh: Divisi Multimedia" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Penanggung Jawab / Pemilik</label>
+                        <input type="text" id="pemilik" placeholder="Contoh: Bidang Data & Informasi" class="mt-1 block w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Unggah Foto Fisik</label>
-                        <input type="file" id="foto-input" accept="image/*" class="block w-full text-xs text-slate-500 border border-slate-200 rounded-xl bg-slate-50 file:mr-3 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Unggah Foto Fisik</label>
+                        <input type="file" id="foto-input" accept="image/*" class="block w-full text-[11px] text-slate-500 border border-slate-200 rounded-xl bg-slate-50 file:mr-3 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer">
                     </div>
-                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer active:scale-[0.98]">
-                        Simpan & Kirim ke Cloud
+                    <button onclick="simpanAset()" id="btn-simpan" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md shadow-blue-600/10 transition-all cursor-pointer active:scale-[0.98]">
+                        Simpan & Sinkronisasi Cloud
                     </button>
                 </div>
             </div>
 
-            <div id="box-detail" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
-                <div class="w-full border-b border-slate-100 pb-3 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                        <span class="w-1.5 h-4 rounded bg-indigo-600 block"></span> Informasi Detail Aset
+            <div id="box-detail" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/60 space-y-4 lg:col-span-1">
+                <div class="w-full border-b border-slate-100 pb-2.5 flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded-full bg-indigo-600 block"></span> File Profil Aset
                     </h3>
-                    <button id="btn-print-stiker" onclick="cetakStikerQR()" class="hidden bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition-all cursor-pointer">
-                        🏷️ Cetak Stiker
+                    <button id="btn-print-stiker" onclick="cetakStikerQR()" class="hidden bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all cursor-pointer">
+                        🏷️ Cetak QR
                     </button>
                 </div>
                 <div class="flex flex-col items-center justify-center text-center">
-                    <h3 id="judul-detail" class="text-base font-bold text-slate-900 mb-1">QR Code Terbuat</h3>
-                    <p id="info-kode" class="text-xs text-slate-400 mb-4">Belum ada barang dipilih</p>
+                    <h3 id="judul-detail" class="text-sm font-black text-slate-900 mb-0.5">Informasi Aset</h3>
+                    <p id="info-kode" class="text-xs text-slate-400 mb-4">Silakan pilih item pada log tabel</p>
                     <div id="tempat-foto" class="mb-4 hidden">
-                        <img id="foto-tampilan" src="" alt="Foto Aset" class="w-32 h-32 object-cover rounded-2xl shadow-md border border-slate-200">
+                        <img id="foto-tampilan" src="" alt="Foto Aset" class="w-28 h-28 object-cover rounded-2xl shadow-md border border-slate-100">
                     </div>
-                    <div id="tempat-qr" class="p-3 bg-slate-50 border border-slate-100 rounded-2xl mb-4"></div>
+                    <div id="tempat-qr" class="p-2.5 bg-slate-50 border border-slate-100 rounded-2xl mb-4"></div>
                     <div id="area-update-status" class="hidden w-full border-t border-slate-100 pt-3">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ubah Status Kondisi</label>
-                        <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-blue-200 rounded-xl bg-blue-50 text-blue-900 font-bold focus:outline-none cursor-pointer">
+                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ubah Status Kondisi</label>
+                        <select id="ubah-status" onchange="updateKondisiBarang()" class="w-full p-2 text-xs border border-indigo-200 rounded-xl bg-indigo-50/60 text-indigo-950 font-bold focus:outline-none cursor-pointer">
                             <option value="Bagus">Bagus</option>
                             <option value="Rusak Ringan">Rusak Ringan</option>
                             <option value="Rusak Berat">Rusak Berat</option>
@@ -220,18 +266,19 @@
                 </div>
             </div>
 
-            <div id="block-scanner" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col justify-between lg:col-span-1">
+            <div id="block-scanner" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/60 flex flex-col justify-between lg:col-span-1">
                 <div>
-                    <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3 mb-3 uppercase tracking-wider">
-                        <span class="w-1.5 h-4 rounded bg-emerald-600 block"></span> Pemindai QR Lapangan
+                    <h2 class="text-xs font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2.5 mb-2.5 uppercase tracking-wider">
+                        <span class="w-1.5 h-4 rounded-full bg-emerald-600 block"></span> Pemindai Inframerah QR
                     </h2>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-4">Arahkan kamera ke stiker QR Code yang tertempel pada perangkat aset untuk melakukan pelacakan otomatis.</p>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">Gunakan kamera internal perangkat untuk memindai kode QR fisik secara cepat tanpa henti.</p>
                 </div>
-                <div class="flex flex-col items-center justify-center">
-                    <button id="btn-kendali-scan" onclick="mulaiScanner()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-semibold text-sm cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]">
-                        Buka Kamera Scanner
+                <div class="flex flex-col items-center justify-center scanner-container" id="container-scanner-utama">
+                    <div class="laser-line"></div>
+                    <button id="btn-kendali-scan" onclick="mulaiScanner()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]">
+                        Aktifkan Kamera Scan
                     </button>
-                    <div id="reader" class="w-full rounded-xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50"></div>
+                    <div id="reader" class="w-full rounded-2xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50"></div>
                 </div>
             </div>
         </div>
@@ -245,45 +292,45 @@
 
         <div id="area-stiker-masal-print"></div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200/60">
             <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-5 pb-3 border-b border-slate-100 non-cetak">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                        <span class="w-1.5 h-4 rounded bg-slate-900 block"></span> Logistik & Data Inventaris
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-4 rounded-full bg-slate-900 block"></span> Inventaris Utama Kantor
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Seluruh daftar barang yang tercatat secara real-time</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Menampilkan semua arsip logistik fisik BAPPEDA</p>
                 </div>
                 
-                <div class="flex items-center gap-3 flex-1 max-w-xl md:justify-end flex-wrap">
-                    <div class="relative w-full sm:w-64">
+                <div class="flex items-center gap-2 flex-1 max-w-xl md:justify-end flex-wrap">
+                    <div class="relative w-full sm:w-60">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
-                        <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari aset atau ruangan..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
-                    <button onclick="cetakSemuaStikerQR()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-amber-600/10 shrink-0">
-                        🏷️ Cetak Masal QR
+                    <button onclick="cetakSemuaStikerQR()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-sm">
+                        🏷️ Cetak Masal
                     </button>
-                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-sm">
                         🖨️ Cetak Laporan
                     </button>
-                    <button onclick="eksporKeExcelPremium()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-emerald-600/10 shrink-0">
-                        📊 Ekspor Excel
+                    <button onclick="eksporKeExcelPremium()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-sm">
+                        📊 Excel
                     </button>
                 </div>
             </div>
             
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-xl border border-slate-100">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200/60">
+                        <tr class="bg-slate-50/70 text-slate-400 text-[10px] font-bold uppercase tracking-wider border-b border-slate-100">
                             <th class="p-3.5">Kode Registrasi</th>
                             <th class="p-3.5">Nama Spesifikasi Aset</th>
                             <th class="p-3.5">Tahun</th>
                             <th class="p-3.5">Lokasi Ruangan</th>
-                            <th class="p-3.5">Unit PJ</th>
+                            <th class="p-3.5">Unit Penanggung Jawab</th>
                             <th class="p-3.5 text-center">Kondisi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabel-aset" class="text-gray-600 text-sm divide-y divide-slate-100"></tbody>
+                    <tbody id="tabel-aset" class="text-slate-600 text-xs divide-y divide-slate-100/70"></tbody>
                 </table>
             </div>
 
@@ -319,9 +366,8 @@
         let varChartKondisiAset = null;
         let memoriLokalDataAset = [];
         let rolePenggunaAktif = "user";
-        let antreanScanMasal = []; // Menyimpan log barang yang ter-scan di Bulk Mode
+        let antreanScanMasal = [];
 
-        // ================= SISTEM AUTHENTICATION SECURITY =================
         async function cekStatusSesiUser() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
@@ -330,10 +376,8 @@
                 
                 rolePenggunaAktif = session.user.user_metadata?.role || 'user';
                 terapkanPembatasanRoleUI(rolePenggunaAktif);
-
                 tampilkanTabel();
             } else {
-                // Jangan paksa tampilkan login jika ada parameter ?scan= dari luar aplikasi
                 const urlParams = new URLSearchParams(window.location.search);
                 if (!urlParams.get('scan')) {
                     document.getElementById('form-login-container').classList.remove('hidden');
@@ -354,14 +398,13 @@
 
             if (role === 'admin') {
                 badge.innerText = "👑 Admin Master";
-                badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-amber-200 border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm";
+                badge.className = "text-[11px] font-bold px-2.5 py-1.5 rounded-xl text-amber-400 border border-amber-500/20 bg-amber-500/10 backdrop-blur-md";
             } else if (role === 'user') {
-                badge.innerText = "👨‍💻 User Operator";
-                badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-blue-200 border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm";
+                badge.innerText = "👨‍💻 Operator";
+                badge.className = "text-[11px] font-bold px-2.5 py-1.5 rounded-xl text-blue-400 border border-blue-500/20 bg-blue-500/10 backdrop-blur-md";
             } else if (role === 'kepala') {
                 badge.innerText = "💼 Kepala Badan";
-                badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-emerald-200 border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm";
-                
+                badge.className = "text-[11px] font-bold px-2.5 py-1.5 rounded-xl text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 backdrop-blur-md";
                 blockRegistrasi.classList.add('hidden');
                 blockScanner.classList.add('hidden');
             }
@@ -394,23 +437,18 @@
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') cekStatusSesiUser();
         });
 
-        // ================= LOGIKA PENCARIAN PINTAR (REAL-TIME FILTER) =================
         function filterPencarianTabelAset() {
             const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
-            
             const hasilSaring = memoriLokalDataAset.filter(item => {
                 const nama = (item.nama || "").toLowerCase();
                 const kode = (item.kode || "").toLowerCase();
                 const ruangan = (item.ruangan || "").toLowerCase();
                 const pemilik = (item.pemilik || "").toLowerCase();
-                
                 return nama.includes(kataKunci) || kode.includes(kataKunci) || ruangan.includes(kataKunci) || pemilik.includes(kataKunci);
             });
-
             renderBarisTabelSecaraFisik(hasilSaring);
         }
 
-        // ================= DATABASE & GRAPHIC LOGIC =================
         async function alexAmbilData() {
             let { data, error } = await _supabase.from('aset_barang').select('*').order('id', { ascending: true });
             if (error) { console.error(error); return []; }
@@ -435,17 +473,18 @@
             if (varChartKondisiAset) { varChartKondisiAset.destroy(); }
 
             varChartKondisiAset = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
-                    labels: ['Bagus', 'Rusak Ringan', 'Rusak Berat / Hilang'],
+                    labels: ['Bagus', 'Rusak Ringan', 'Rusak Berat/Hilang'],
                     datasets: [{
                         data: [bagus, ringan, beratDanHilang],
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff',
+                        hoverOffset: 4
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
             });
         }
 
@@ -455,26 +494,27 @@
             renderBarisTabelSecaraFisik(memoriLokalDataAset);
         }
 
+        // TABEL & BADGE STATUS DENGAN UI/UX LEMBUT DAN MODERN (NO. 2)
         function renderBarisTabelSecaraFisik(arrayData) {
             const tabel = document.getElementById('tabel-aset');
             if(!tabel) return;
             tabel.innerHTML = '';
             
             arrayData.forEach(aset => {
-                let warnaStatus = "bg-emerald-50 text-emerald-700 border border-emerald-200/50";
-                if(aset.status === "Rusak Ringan") warnaStatus = "bg-amber-50 text-amber-700 border border-amber-200/50";
-                if(aset.status === "Rusak Berat") warnaStatus = "bg-rose-50 text-rose-700 border border-rose-200/50";
-                if(aset.status === "Hilang") warnaStatus = "bg-slate-100 text-slate-700 border border-slate-200/50";
+                let warnaStatus = "bg-emerald-50 text-emerald-700 border border-emerald-200/40";
+                if(aset.status === "Rusak Ringan") warnaStatus = "bg-amber-50 text-amber-700 border border-amber-200/40";
+                if(aset.status === "Rusak Berat") warnaStatus = "bg-rose-50 text-rose-700 border border-rose-200/40";
+                if(aset.status === "Hilang") warnaStatus = "bg-slate-50 text-slate-600 border border-slate-200/50";
 
                 tabel.innerHTML += `
-                    <tr class="hover:bg-slate-50/80 cursor-pointer transition-all duration-150" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}', '${aset.ruangan || '-'}')">
-                        <td class="p-3.5 font-mono font-bold text-blue-600">${aset.kode}</td>
-                        <td class="p-3.5 font-semibold text-slate-900">${aset.nama}</td>
-                        <td class="p-3.5 text-slate-500 font-medium">${aset.tahun || '-'}</td>
-                        <td class="p-3.5 text-slate-600 font-medium">📍 ${aset.ruangan || '-'}</td>
-                        <td class="p-3.5 text-slate-500">${aset.pemilik}</td>
+                    <tr class="hover:bg-slate-50/80 hover:-translate-y-0.5 hover:shadow-sm cursor-pointer transition-all duration-200" onclick="lihatDetailAsetLokal('${aset.kode}', '${aset.nama}', '${aset.pemilik}', '${aset.status}', '${aset.foto_url}', '${aset.ruangan || '-'}')">
+                        <td class="p-3.5 font-mono font-bold text-blue-600 text-xs">${aset.kode}</td>
+                        <td class="p-3.5 font-semibold text-slate-800">${aset.nama}</td>
+                        <td class="p-3.5 text-slate-400 font-medium">${aset.tahun || '-'}</td>
+                        <td class="p-3.5 text-slate-500 font-medium">📍 ${aset.ruangan || '-'}</td>
+                        <td class="p-3.5 text-slate-400">${aset.pemilik}</td>
                         <td class="p-3.5 text-center">
-                            <span class="${warnaStatus} px-3 py-1 rounded-full text-xs font-bold tracking-wide">${aset.status}</span>
+                            <span class="${warnaStatus} px-3 py-1 rounded-lg text-[10px] font-bold tracking-wide">${aset.status}</span>
                         </td>
                     </tr>
                 `;
@@ -492,7 +532,7 @@
             if (!nama || !pemilik) { return alert("Harap isi semua kolom!"); }
 
             const btnSimpan = document.getElementById('btn-simpan');
-            btnSimpan.innerText = "Mengunggah Data..."; btnSimpan.disabled = true;
+            btnSimpan.innerText = "Mengamankan Form..."; btnSimpan.disabled = true;
 
             const databaseAset = await alexAmbilData();
             const jumlahSama = databaseAset.filter(item => item.kode.includes(kategori) && item.kode.includes(tahunBeli)).length;
@@ -506,7 +546,7 @@
                 const { data: uploadData, error: uploadError } = await _supabase.storage.from('foto_aset').upload(namaFileUnik, fotoFile);
                 if (uploadError) {
                     alert("Gagal upload gambar: " + uploadError.message);
-                    btnSimpan.innerText = "Simpan & Kirim ke Cloud"; btnSimpan.disabled = false; return;
+                    btnSimpan.innerText = "Simpan & Sinkronisasi Cloud"; btnSimpan.disabled = false; return;
                 }
                 const { data: urlData } = _supabase.storage.from('foto_aset').getPublicUrl(namaFileUnik);
                 urlFotoHasilUpload = urlData.publicUrl;
@@ -523,15 +563,15 @@
                 document.getElementById('nama').value = ''; document.getElementById('pemilik').value = ''; document.getElementById('foto-input').value = '';
                 tampilkanTabel();
             }
-            btnSimpan.innerText = "Simpan & Kirim ke Cloud"; btnSimpan.disabled = false;
+            btnSimpan.innerText = "Simpan & Sinkronisasi Cloud"; btnSimpan.disabled = false;
         }
 
         function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl, ruangan) {
             kodeAsetSedangDilihat = kode;
             document.getElementById('judul-detail').innerText = nama;
             document.getElementById('info-kode').innerHTML = `
-                <span class="text-blue-600 font-mono font-bold">${kode}</span><br>
-                <span class="text-slate-500 font-medium"> PJ: ${pemilik} | Ruang: ${ruangan || '-'}</span>
+                <span class="text-blue-600 font-mono font-bold text-xs">${kode}</span><br>
+                <span class="text-slate-400 text-[11px] font-medium"> PJ: ${pemilik} | Ruang: ${ruangan || '-'}</span>
             `;
             
             const tempatFoto = document.getElementById('tempat-foto');
@@ -542,12 +582,11 @@
                 tempatFoto.classList.add('hidden');
             }
 
-            // FITUR NO 3: MEMBUAT NILAI QR CODE BERBASIS LINK URL DINAMIS
             const domainAplikasi = window.location.origin + window.location.pathname;
             const urlDinamisAset = `${domainAplikasi}?scan=${kode}`;
 
             document.getElementById('tempat-qr').innerHTML = '';
-            new QRCode(document.getElementById('tempat-qr'), { text: urlDinamisAset, width: 120, height: 120 });
+            new QRCode(document.getElementById('tempat-qr'), { text: urlDinamisAset, width: 110, height: 110 });
             
             document.getElementById('stiker-nama').innerText = nama;
             document.getElementById('stiker-kode').innerText = kode;
@@ -571,7 +610,6 @@
             setTimeout(() => { document.body.classList.remove('mode-cetak-stiker-aktif'); }, 500);
         }
 
-        // ================= FUNGSI CETAK MASAL SEMUA STIKER QR (URL DINAMIS) =================
         function cetakSemuaStikerQR() {
             const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
             const domainAplikasi = window.location.origin + window.location.pathname;
@@ -604,15 +642,10 @@
             dataDicetak.forEach((aset, idx) => {
                 const idStikerUnique = `stiker-masal-qr-${idx}`;
                 const urlDinamisMasal = `${domainAplikasi}?scan=${aset.kode}`;
-                new QRCode(document.getElementById(idStikerUnique), {
-                    text: urlDinamisMasal,
-                    width: 75,
-                    height: 75
-                });
+                new QRCode(document.getElementById(idStikerUnique), { text: urlDinamisMasal, width: 75, height: 75 });
             });
 
             document.body.classList.add('mode-cetak-stiker-masal-aktif');
-            
             setTimeout(() => {
                 window.print();
                 document.body.classList.remove('mode-cetak-stiker-masal-aktif');
@@ -629,36 +662,35 @@
             }
         }
 
+        // LOGIKA KENDALI SCANNER + INTERFACES ANIMASI LASER (NO. 3)
         function mulaiScanner() {
             const btn = document.getElementById('btn-kendali-scan');
+            const wrapperScanner = document.getElementById('container-scanner-utama');
+            
             if (html5QrcodeScanner) { 
                 html5QrcodeScanner.clear(); 
                 html5QrcodeScanner = null;
-                btn.innerText = "Buka Kamera Scanner";
-                btn.className = "w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-semibold text-sm cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]";
+                wrapperScanner.classList.remove('scanner-aktif');
+                btn.innerText = "Aktifkan Kamera Scan";
+                btn.className = "w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]";
                 return;
             }
-            antreanScanMasal = []; // Reset antrean scan saat scanner baru dibuka
-            btn.innerText = "Matikan Kamera Scanner 🟥";
-            btn.className = "w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold text-sm cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]";
+            antreanScanMasal = []; 
+            wrapperScanner.classList.add('scanner-aktif');
+            btn.innerText = "Matikan Kamera Scan 🟥";
+            btn.className = "w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-sm transition-all mb-3 active:scale-[0.98]";
             
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 15, qrbox: 220 });
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 20, qrbox: 200 });
             html5QrcodeScanner.render(onScanSuccess, onScanError);
         }
 
-        // ================= FITUR NO 3: BULK MODE SCANNER (KAMERA TETAP NYALA & ANTI DUPLIKASI) =================
         async function onScanSuccess(decodedText, decodedResult) {
             let kodeMurni = decodedText;
-            
-            // Jika isi QR Code berupa URL link utuh, ekstrak kodenya saja
             if (decodedText.includes('?scan=')) {
                 kodeMurni = decodedText.split('?scan=')[1];
             }
 
-            // Cegah pemindaian berulang terhadap barang yang sama dalam satu sesi pemindaian cepat
-            if (antreanScanMasal.includes(kodeMurni)) {
-                return; 
-            }
+            if (antreanScanMasal.includes(kodeMurni)) return; 
 
             const databaseAset = await alexAmbilData();
             const barang = databaseAset.find(item => item.kode === kodeMurni);
@@ -666,7 +698,6 @@
             if (barang) {
                 antreanScanMasal.push(kodeMurni);
                 
-                // Efek Audio Bip Instan menggunakan Browser Audio API
                 try {
                     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     const oscillator = audioCtx.createOscillator();
@@ -674,38 +705,34 @@
                     oscillator.connect(gainNode);
                     gainNode.connect(audioCtx.destination);
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(950, audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.06, audioCtx.currentTime);
                     oscillator.start();
                     oscillator.stop(audioCtx.currentTime + 0.08);
-                } catch(e) { console.log("Audio feedback tidak disupport browser."); }
+                } catch(e) {}
 
-                // Pop-up Notifikasi Kilat Sukses di Layar
                 const flashNotif = document.createElement('div');
-                flashNotif.className = "fixed top-6 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl shadow-xl z-50 font-bold text-xs animate-bounce border border-emerald-500";
+                flashNotif.className = "fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-emerald-400 px-5 py-2.5 rounded-xl shadow-2xl z-50 font-bold text-xs border border-emerald-500/20 backdrop-blur-md";
                 flashNotif.innerText = `✅ [TERCATAT] ${barang.nama}`;
                 document.body.appendChild(flashNotif);
-                setTimeout(() => flashNotif.remove(), 1800);
+                setTimeout(() => flashNotif.remove(), 1500);
 
-                // Langsung isi box detail tanpa menutup kamera
                 lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url, barang.ruangan);
                 
-                // Efek Visual Menandai Baris Tabel & Scroll Otomatis ke Barang Tersebut
                 const barisTabel = document.getElementById('tabel-aset').children;
                 for (let tr of barisTabel) {
                     if (tr.innerHTML.includes(kodeMurni)) {
-                        tr.className = "bg-emerald-50/80 border-l-4 border-l-emerald-500 font-medium transition-all duration-300";
+                        tr.className = "bg-emerald-50/60 border-l-4 border-l-emerald-500 font-medium transition-all duration-300 shadow-inner";
                         tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
             } else {
-                alert(`Kode QR "${kodeMurni}" tidak dikenali oleh sistem.`);
+                alert(`Kode QR "${kodeMurni}" tidak terdaftar.`);
             }
         }
 
         function onScanError(err) {}
 
-        // ================= FITUR NO 3: SISTEM PELACAKAN GLOBAL (TANPA LOGIN) =================
         async function cekParameterScanSistem() {
             const urlParams = new URLSearchParams(window.location.search);
             const kodeAsetDariUrl = urlParams.get('scan');
@@ -715,34 +742,26 @@
                 const barang = databaseAset.find(item => item.kode === kodeAsetDariUrl);
                 
                 if (barang) {
-                    // Bypass form login & tampilkan aplikasi utama
                     document.getElementById('form-login-container').classList.add('hidden');
                     document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
                     
-                    // Sembunyikan semua aksi modifikasi data demi keamanan (Hanya Lihat)
                     document.getElementById('block-registrasi').classList.add('hidden');
                     document.getElementById('block-scanner').classList.add('hidden');
                     document.getElementById('area-grafis-analitik').classList.add('hidden');
                     document.getElementById('btn-logout-sistem').classList.add('hidden');
                     
-                    // Berikan penanda khusus status mode pengecekan publik
                     const badge = document.getElementById('badge-hak-akses');
-                    badge.innerText = "🔍 Mode Informasi Publik";
-                    badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-slate-600 border border-slate-300 bg-slate-100";
+                    badge.innerText = "🔍 Informasi Publik";
+                    badge.className = "text-[11px] font-bold px-2.5 py-1.5 rounded-xl text-slate-600 border border-slate-200 bg-slate-100";
                     
-                    // Tampilkan profil detail barang hasil scan HP luar secara otomatis
                     lihatDetailAsetLokal(barang.kode, barang.nama, barang.pemilik, barang.status, barang.foto_url, barang.ruangan);
-                    
-                    // Bersihkan parameter alamat URL browser tanpa memicu refresh halaman
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }
         }
 
         function eksporKeExcelPremium() {
-            if (memoriLokalDataAset.length === 0) {
-                return alert("Tidak ada data aset untuk diekspor!");
-            }
+            if (memoriLokalDataAset.length === 0) return alert("Tidak ada data aset untuk diekspor!");
 
             const dataRapi = memoriLokalDataAset.map((aset, index) => ({
                 "No": index + 1,
@@ -758,16 +777,14 @@
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Data Aset BAPPEDA");
 
-            const aturLebarKolom = [
+            worksheet['!cols'] = [
                 { wch: 5 }, { wch: 22 }, { wch: 35 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 15 }
             ];
-            worksheet['!cols'] = aturLebarKolom;
 
             const tanggalHariIni = new Date().toISOString().split('T')[0];
             XLSX.writeFile(workbook, `SIMAK_BAPPEDA_EXPORT_${tanggalHariIni}.xlsx`);
         }
 
-        // Menjalankan fungsi utama aplikasi beserta listener scan dari luar
         cekStatusSesiUser();
         cekParameterScanSistem();
     </script>
