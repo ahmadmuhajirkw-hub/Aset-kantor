@@ -13,7 +13,7 @@
 
     <style>
         /* ================= MANAGEMENT PRINT CSS SYSTEM ================= */
-        #area-stiker-print, .kop-surat-dinas, .lembar-pengesahan { display: none; }
+        #area-stiker-print, #area-stiker-masal-print, .kop-surat-dinas, .lembar-pengesahan { display: none; }
 
         @media print {
             body { background-color: white !important; padding: 0 !important; color: #000 !important; }
@@ -23,11 +23,22 @@
             table { width: 100% !important; border: 1px solid #000 !important; border-collapse: collapse !important; margin-top: 20px !important; }
             th, td { border: 1px solid #000 !important; color: #000 !important; font-size: 10pt !important; padding: 10px 8px !important; }
 
-            /* SITUASI B: PRINT STIKER */
+            /* SITUASI B: PRINT STIKER TUNGGAL */
             body.mode-cetak-stiker-aktif { padding: 0 !important; margin: 0 !important; }
             body.mode-cetak-stiker-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
             body.mode-cetak-stiker-aktif .non-cetak, body.mode-cetak-stiker-aktif .kop-surat-dinas, body.mode-cetak-stiker-aktif .lembar-pengesahan, body.mode-cetak-stiker-aktif table, body.mode-cetak-stiker-aktif #reader, body.mode-cetak-stiker-aktif .grid, body.mode-cetak-stiker-aktif #box-detail, body.mode-cetak-stiker-aktif #area-grafis-analitik, body.mode-cetak-stiker-aktif #form-login-container { display: none !important; }
             body.mode-cetak-stiker-aktif #area-stiker-print { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; width: 45mm !important; height: 45mm !important; padding: 2mm !important; margin: 0 auto !important; border: 1px solid #000 !important; box-sizing: border-box !important; page-break-inside: avoid !important; }
+
+            /* SITUASI C: PRINT STIKER MASAL (BANYAK SEKALIGUS) */
+            body.mode-cetak-stiker-masal-aktif { padding: 0 !important; margin: 0 !important; background: white !important; }
+            body.mode-cetak-stiker-masal-aktif .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            body.mode-cetak-stiker-masal-aktif .non-cetak, body.mode-cetak-stiker-masal-aktif .kop-surat-dinas, body.mode-cetak-stiker-masal-aktif .lembar-pengesahan, body.mode-cetak-stiker-masal-aktif table, body.mode-cetak-stiker-masal-aktif #reader, body.mode-cetak-stiker-masal-aktif .grid, body.mode-cetak-stiker-masal-aktif #box-detail, body.mode-cetak-stiker-masal-aktif #area-grafis-analitik, body.mode-cetak-stiker-masal-aktif #form-login-container, body.mode-cetak-stiker-masal-aktif #area-stiker-print { display: none !important; }
+            body.mode-cetak-stiker-masal-aktif #area-stiker-masal-print { 
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr) !important; /* Membentuk baris 3 kolom stiker */
+                gap: 6mm !important; 
+                padding: 5mm !important; 
+            }
         }
     </style>
 </head>
@@ -225,12 +236,16 @@
             </div>
         </div>
 
+        <!-- AREA CETAK SINGLE -->
         <div id="area-stiker-print">
             <p style="font-size: 8pt; font-weight: bold; margin: 0 0 4px 0; color: black; font-family: sans-serif; letter-spacing: 0.5px;">BAPPEDA NAGAN RAYA</p>
             <div id="tempat-qr-stiker" style="display: flex; justify-content: center; margin: 4px 0;"></div>
             <p id="stiker-nama" style="font-size: 7pt; font-weight: bold; margin: 4px 0 1px 0; color: black; font-family: sans-serif; text-transform: uppercase; max-width: 38mm; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></p>
             <p id="stiker-kode" style="font-size: 7pt; font-weight: bold; font-family: monospace; margin: 0; color: black;"></p>
         </div>
+
+        <!-- KONTAINER BARU: AREA CETAK MASAL -->
+        <div id="area-stiker-masal-print"></div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
             <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-5 pb-3 border-b border-slate-100 non-cetak">
@@ -241,15 +256,19 @@
                     <p class="text-xs text-slate-400 mt-0.5">Seluruh daftar barang yang tercatat secara real-time</p>
                 </div>
                 
-                <div class="flex items-center gap-3 flex-1 max-w-xl md:justify-end">
-                    <div class="relative w-full">
+                <div class="flex items-center gap-3 flex-1 max-w-xl md:justify-end flex-wrap">
+                    <div class="relative w-full sm:w-64">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
-                        <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang, ruangan, kode, atau pemilik..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <input type="text" id="input-pencarian-pintar" onkeyup="filterPencarianTabelAset()" placeholder="Cari nama barang..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
-                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
-                        🖨️ Cetak
+                    <!-- TOMBOL CETAK BARU: CETAK MASAL STIKER QR -->
+                    <button onclick="cetakSemuaStikerQR()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-amber-600/10 shrink-0">
+                        🏷️ Cetak Masal QR
                     </button>
-                    <button onclick="eksporKeExcelPremium()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-emerald-600/10 shrink-0">
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-blue-600/10 shrink-0">
+                        🖨️ Cetak Laporan
+                    </button>
+                    <button onclick="eksporKeExcelPremium()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-emerald-600/10 shrink-0">
                         📊 Ekspor Excel
                     </button>
                 </div>
@@ -302,7 +321,7 @@
         let kodeAsetSedangDilihat = "";
         let varChartKondisiAset = null;
         let memoriLokalDataAset = [];
-        let rolePenggunaAktif = "user"; // Variabel global untuk mendeteksi peran aktif
+        let rolePenggunaAktif = "user";
 
         // ================= SISTEM AUTHENTICATION SECURITY =================
         async function cekStatusSesiUser() {
@@ -311,7 +330,6 @@
                 document.getElementById('form-login-container').classList.add('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
                 
-                // Mengambil metadata role dari user Supabase
                 rolePenggunaAktif = session.user.user_metadata?.role || 'user';
                 terapkanPembatasanRoleUI(rolePenggunaAktif);
 
@@ -322,14 +340,12 @@
             }
         }
 
-        // FUNGSI UTAMA: Menyembunyikan elemen HTML berdasarkan Role Akun
         function terapkanPembatasanRoleUI(role) {
             const badge = document.getElementById('badge-hak-akses');
             const blockRegistrasi = document.getElementById('block-registrasi');
             const blockScanner = document.getElementById('block-scanner');
             const areaUpdateStatus = document.getElementById('area-update-status');
 
-            // Reset komponen menjadi terlihat terlebih dahulu
             blockRegistrasi.classList.remove('hidden');
             blockScanner.classList.remove('hidden');
             areaUpdateStatus.classList.add('hidden');
@@ -344,7 +360,6 @@
                 badge.innerText = "💼 Kepala Badan";
                 badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-emerald-200 border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm";
                 
-                // AKUN KEPALA: Sembunyikan Form Penginputan dan Scanner Kamera
                 blockRegistrasi.classList.add('hidden');
                 blockScanner.classList.add('hidden');
             }
@@ -497,7 +512,7 @@
 
             const { error } = await _supabase.from('aset_barang').insert([{ 
                 kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", 
-                foto_url: urlFotoHasilUpload, tahun: yearBeli, ruangan: ruanganDipilih 
+                foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih 
             }]);
 
             if (error) { alert("Gagal menyimpan data: " + error.message); } 
@@ -534,7 +549,6 @@
 
             document.getElementById('btn-print-stiker').classList.remove('hidden');
             
-            // KONTROL AKSES PANEL UPDATE: Hanya Admin Master yang boleh merubah status fisik aset
             if (rolePenggunaAktif === 'admin') {
                 document.getElementById('area-update-status').classList.remove('hidden');
                 document.getElementById('ubah-status').value = status;
@@ -548,6 +562,57 @@
             document.body.classList.add('mode-cetak-stiker-aktif');
             window.print();
             setTimeout(() => { document.body.classList.remove('mode-cetak-stiker-aktif'); }, 500);
+        }
+
+        // ================= FUNGSI BARU: CETAK MASAL SEMUA STIKER QR =================
+        function cetakSemuaStikerQR() {
+            const kataKunci = document.getElementById('input-pencarian-pintar').value.toLowerCase();
+            
+            // Menyaring data berdasarkan pencarian aktif agar fleksibel (bisa cetak semua atau per kategori)
+            const dataDicetak = memoriLokalDataAset.filter(item => {
+                const nama = (item.nama || "").toLowerCase();
+                const kode = (item.kode || "").toLowerCase();
+                const ruangan = (item.ruangan || "").toLowerCase();
+                const pemilik = (item.pemilik || "").toLowerCase();
+                return nama.includes(kataKunci) || kode.includes(kataKunci) || ruangan.includes(kataKunci) || pemilik.includes(kataKunci);
+            });
+
+            if (dataDicetak.length === 0) return alert("Tidak ada data aset untuk dicetak masal!");
+
+            const containerMasal = document.getElementById('area-stiker-masal-print');
+            containerMasal.innerHTML = ''; // Reset isi kontainer terdahulu
+
+            // 1. Gambar kerangka fisik kotak stiker ke dalam DOM
+            dataDicetak.forEach((aset, idx) => {
+                const idStikerUnique = `stiker-masal-qr-${idx}`;
+                containerMasal.innerHTML += `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 45mm; height: 45mm; padding: 2mm; margin: 0 auto; border: 1px solid #000; box-sizing: border-box; page-break-inside: avoid; background: white; color: black;">
+                        <p style="font-size: 8pt; font-weight: bold; margin: 0 0 3px 0; font-family: sans-serif; letter-spacing: 0.5px; text-align: center;">BAPPEDA NAGAN RAYA</p>
+                        <div id="${idStikerUnique}" style="display: flex; justify-content: center; margin: 2px 0;"></div>
+                        <p style="font-size: 7pt; font-weight: bold; margin: 4px 0 1px 0; font-family: sans-serif; text-transform: uppercase; max-width: 38mm; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">${aset.nama}</p>
+                        <p style="font-size: 7pt; font-weight: bold; font-family: monospace; margin: 0; text-align: center;">${aset.kode}</p>
+                    </div>
+                `;
+            });
+
+            // 2. Injeksikan gambar QR Code ke masing-masing box stiker yang sudah dibuat
+            dataDicetak.forEach((aset, idx) => {
+                const idStikerUnique = `stiker-masal-qr-${idx}`;
+                new QRCode(document.getElementById(idStikerUnique), {
+                    text: aset.kode,
+                    width: 75,
+                    height: 75
+                });
+            });
+
+            // 3. Ubah mode body menjadi cetak masal, panggil jendela printer OS
+            document.body.classList.add('mode-cetak-stiker-masal-aktif');
+            
+            // Memberikan sedikit jeda waktu agar lib QRCode.js tuntas merender seluruh canvas/image
+            setTimeout(() => {
+                window.print();
+                document.body.classList.remove('mode-cetak-stiker-masal-aktif');
+            }, 800);
         }
 
         async function updateKondisiBarang() {
@@ -600,13 +665,7 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, "Data Aset BAPPEDA");
 
             const aturLebarKolom = [
-                { wch: 5 },  // No
-                { wch: 22 }, // Kode Registrasi
-                { wch: 35 }, // Nama Spesifikasi Aset
-                { wch: 15 }, // Tahun Anggaran
-                { wch: 25 }, // Lokasi Ruangan
-                { wch: 25 }, // Unit Penanggung Jawab
-                { wch: 15 }  // Status Kondisi
+                { wch: 5 }, { wch: 22 }, { wch: 35 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 15 }
             ];
             worksheet['!cols'] = aturLebarKolom;
 
