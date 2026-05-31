@@ -50,7 +50,7 @@
                     <input type="password" id="login-password" placeholder="••••••••" class="mt-1.5 block w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
                 <button onclick="prosesLogin()" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/10 transition-all cursor-pointer text-center">
-                    Login
+                    Masuk ke Sistem
                 </button>
             </div>
         </div>
@@ -156,7 +156,7 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Lokasi Penempatan Ruangan</label>
                         <select id="lokasi-ruangan" class="mt-1.5 block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                             <option value="Ruang Kaban">Ruang Kepala Badan</option>
-                            <option value="Ruang Secretariat">Ruang Secretariat</option>
+                            <option value="Ruang Secretariat">Ruang Sekretariat</option>
                             <option value="Ruang Pusdatin">Ruang Pusdatin / IT</option>
                             <option value="Aula">Aula Utama</option>
                             <option value="Aula">Aula Lantai I</option>
@@ -302,7 +302,7 @@
         let kodeAsetSedangDilihat = "";
         let varChartKondisiAset = null;
         let memoriLokalDataAset = [];
-        let rolePenggunaAktif = "user"; // Variabel global baru untuk melacak hak akses
+        let rolePenggunaAktif = "user"; // Variabel global untuk mendeteksi peran aktif
 
         // ================= SISTEM AUTHENTICATION SECURITY =================
         async function cekStatusSesiUser() {
@@ -311,8 +311,8 @@
                 document.getElementById('form-login-container').classList.add('hidden');
                 document.getElementById('konten-aplikasi-utama').classList.remove('hidden');
                 
-                // Mengambil metadata role dari Supabase, default-nya ke 'user' jika tidak diset
-                rolePenggunaAktif = session.user.user_metadata.role || 'user';
+                // Mengambil metadata role dari user Supabase
+                rolePenggunaAktif = session.user.user_metadata?.role || 'user';
                 terapkanPembatasanRoleUI(rolePenggunaAktif);
 
                 tampilkanTabel();
@@ -322,14 +322,14 @@
             }
         }
 
-        // FUNGSI BARU: Mengontrol tampilan UI berdasarkan tingkatan akun
+        // FUNGSI UTAMA: Menyembunyikan elemen HTML berdasarkan Role Akun
         function terapkanPembatasanRoleUI(role) {
             const badge = document.getElementById('badge-hak-akses');
             const blockRegistrasi = document.getElementById('block-registrasi');
             const blockScanner = document.getElementById('block-scanner');
             const areaUpdateStatus = document.getElementById('area-update-status');
 
-            // Reset komponen ke default terlihat
+            // Reset komponen menjadi terlihat terlebih dahulu
             blockRegistrasi.classList.remove('hidden');
             blockScanner.classList.remove('hidden');
             areaUpdateStatus.classList.add('hidden');
@@ -340,16 +340,13 @@
             } else if (role === 'user') {
                 badge.innerText = "👨‍💻 User Operator";
                 badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-blue-200 border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm";
-                // User Operator tidak diberi hak mengubah status barang yang sudah tersimpan
-                areaUpdateStatus.classList.add('hidden');
             } else if (role === 'kepala') {
                 badge.innerText = "💼 Kepala Badan";
                 badge.className = "text-xs font-bold px-3 py-2 rounded-xl text-emerald-200 border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm";
                 
-                // Sembunyikan form registrasi dan scanner untuk akun Kepala
+                // AKUN KEPALA: Sembunyikan Form Penginputan dan Scanner Kamera
                 blockRegistrasi.classList.add('hidden');
                 blockScanner.classList.add('hidden');
-                areaUpdateStatus.classList.add('hidden');
             }
         }
 
@@ -364,9 +361,9 @@
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
             if (error) {
                 alert("Gagal masuk: " + error.message);
-                btn.innerText = "Login"; btn.disabled = false;
+                btn.innerText = "Masuk ke Sistem"; btn.disabled = false;
             } else {
-                btn.innerText = "Login"; btn.disabled = false;
+                btn.innerText = "Masuk ke Sistem"; btn.disabled = false;
                 cekStatusSesiUser();
             }
         }
@@ -492,7 +489,7 @@
                 const { data: uploadData, error: uploadError } = await _supabase.storage.from('foto_aset').upload(namaFileUnik, fotoFile);
                 if (uploadError) {
                     alert("Gagal upload gambar: " + uploadError.message);
-                    btnSimpan.innerText = "Simpan ke Cloud"; btnSimpan.disabled = false; return;
+                    btnSimpan.innerText = "Simpan & Kirim ke Cloud"; btnSimpan.disabled = false; return;
                 }
                 const { data: urlData } = _supabase.storage.from('foto_aset').getPublicUrl(namaFileUnik);
                 urlFotoHasilUpload = urlData.publicUrl;
@@ -500,7 +497,7 @@
 
             const { error } = await _supabase.from('aset_barang').insert([{ 
                 kode: kodeBarang, nama: nama, pemilik: pemilik, status: "Bagus", 
-                foto_url: urlFotoHasilUpload, tahun: tahunBeli, ruangan: ruanganDipilih 
+                foto_url: urlFotoHasilUpload, tahun: yearBeli, ruangan: ruanganDipilih 
             }]);
 
             if (error) { alert("Gagal menyimpan data: " + error.message); } 
@@ -509,7 +506,7 @@
                 document.getElementById('nama').value = ''; document.getElementById('pemilik').value = ''; document.getElementById('foto-input').value = '';
                 tampilkanTabel();
             }
-            btnSimpan.innerText = "Simpan ke Cloud"; btnSimpan.disabled = false;
+            btnSimpan.innerText = "Simpan & Kirim ke Cloud"; btnSimpan.disabled = false;
         }
 
         function lihatDetailAsetLokal(kode, nama, pemilik, status, fotoUrl, ruangan) {
@@ -537,7 +534,7 @@
 
             document.getElementById('btn-print-stiker').classList.remove('hidden');
             
-            // MODIFIKASI AKSES: Hanya Admin Master yang memunculkan form ubah kondisi fisik
+            // KONTROL AKSES PANEL UPDATE: Hanya Admin Master yang boleh merubah status fisik aset
             if (rolePenggunaAktif === 'admin') {
                 document.getElementById('area-update-status').classList.remove('hidden');
                 document.getElementById('ubah-status').value = status;
@@ -583,7 +580,6 @@
 
         function onScanError(err) {}
 
-        // ================= FUNGSI: EKSPOR EXCEL (.XLSX) PREMIUM =================
         function eksporKeExcelPremium() {
             if (memoriLokalDataAset.length === 0) {
                 return alert("Tidak ada data aset untuk diekspor!");
@@ -601,7 +597,7 @@
 
             const worksheet = XLSX.utils.json_to_sheet(dataRapi);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, workbook, "Data Aset BAPPEDA");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data Aset BAPPEDA");
 
             const aturLebarKolom = [
                 { wch: 5 },  // No
